@@ -1,5 +1,5 @@
 {
-    "name": "artur-gajewski/file-bank",
+    "name": "joacub/file-bank",
     "description": "A Zend Framework 2 module for uploading files to a File Bank along with metadata, keywords and status information and a controller to offer saved files for download.",
     "type": "module",
     "keywords": [
@@ -7,12 +7,12 @@
         "filebank",
         ""
     ],
-    "homepage": "https://github.com/artur-gajewski/FileBank",
+    "homepage": "https://github.com/joacub/FileBank",
     "authors": [
         {
-            "name": "Artur Gajewski",
-            "email": "info@arturgajewski.com",
-            "homepage": "https://github.com/artur-gajewski"
+            "name": "Johan",
+            "email": "joacub@gmail.com",
+            "homepage": "https://github.com/joacub"
         }
     ],
     "minimum-stability": "dev",
