@@ -16,8 +16,25 @@ class FileController extends AbstractActionController
         $id = (int) $this->getEvent()->getRouteMatch()->getParam('id');
 
         $file = $filelib->getFileById($id);
-        $filePath = $filelib->getRoot() . $file->getSavePath();
-
+        $filePath = $file->getAbsolutePath();
+        
+        $response = $this->getResponse();
+        $response->getHeaders()
+        ->addHeaderLine('Content-Description', 'File Transfer')
+        ->addHeaderLine('Content-Type',   $file->getMimetype())
+        ->addHeaderLine('Content-Disposition', 'attachment; filename="' . $file->getName() . '"')
+        ->addHeaderLine('Content-Transfer-Encoding', 'binary')
+        ->addHeaderLine('Expires', time())
+        ->addHeaderLine('Cache-Control', 'must-revalidate')
+        ->addHeaderLine('Pragma', 'public')
+        ->addHeaderLine('Content-Length', $file->getSize());
+        
+        $content = file_get_contents($filePath);
+        
+        $response->setContent($content);
+        
+        return $response;
+        
         header('Content-Description: File Transfer');
         header('Content-Type: ' . $file->getMimetype());
         header('Content-Disposition: attachment; filename=' . $file->getName());
@@ -26,9 +43,26 @@ class FileController extends AbstractActionController
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
         header('Content-Length: ' . $file->getSize());
-        ob_clean();
-        flush();
-        readfile($filePath);
-        exit;
     }
+    
+    
+    public function viewAction()
+    {
+        $filelib = $this->getServiceLocator()->get('FileBank');
+        $id = (int) $this->getEvent()->getRouteMatch()->getParam('id');
+    
+        $file = $filelib->getFileById($id);
+        $filePath = $file->getAbsolutePath();
+        
+        $response = $this->getResponse();
+        $response->getHeaders()
+        ->addHeaderLine('Content-Transfer-Encoding',   'binary')
+        ->addHeaderLine('Content-Type',                $file->getMimetype())
+        ->addHeaderLine('Content-Length',              $file->getSize());
+    
+        $response->setContent(file_get_contents($filePath));
+        
+        return $response;
+    }
+    
 }

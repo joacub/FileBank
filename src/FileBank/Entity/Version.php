@@ -9,12 +9,12 @@ use FileBank\Entity\File;
  * Keyword entity.
  *
  * @ORM\Entity
- * @ORM\Table(name="filebank_keyword")
+ * @ORM\Table(name="filebank_version")
  * @property int $id
  * @property int $fileid
  * @property string $value
  */
-class Keyword
+class Version
 {
     /**
      * @ORM\Id
@@ -24,11 +24,16 @@ class Keyword
     protected $id;
     
     /**
-     * @ORM\ManyToOne(targetEntity="FileBank\Entity\File", inversedBy="keywords")
+     * @ORM\ManyToOne(targetEntity="FileBank\Entity\File", inversedBy="versions")
      * @ORM\JoinColumn(name="fileid", referencedColumnName="id")
      * @var ArrayCollection
      */
     protected $file;
+    
+    /**
+     * @ORM\OneToOne(targetEntity="FileBank\Entity\File", mappedBy="version")
+     */
+    protected $versionfile;
     
     /**
      * @ORM\Column(type="string")
@@ -73,10 +78,12 @@ class Keyword
     public function setFile($value)
     {
         $this->file = $value;
+        
+        return $this;
     }
     
     /**
-     * Getter for the keyword value
+     * Getter for the version value
      * 
      * @return string 
      */
@@ -86,13 +93,25 @@ class Keyword
     }
     
     /**
-     * Setter for the keyword value
+     * Setter for the version value
      * 
      * @param string $value 
      */
     public function setValue($value)
     {
         $this->value = $value;
+        return $this;
+    }
+    
+    public function setVersionFile($value)
+    {
+        $this->versionfile = $value;
+        return $this;
+    }
+    
+    public function getVersionFile()
+    {
+        return $this->versionfile;
     }
     
     /**
@@ -114,6 +133,7 @@ class Keyword
     {
         $this->setFileId($data['fileid']);
         $this->setValue($data['value']);
+        return $this;
     }
        
 }

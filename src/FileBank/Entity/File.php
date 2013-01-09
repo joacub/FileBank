@@ -5,12 +5,13 @@ namespace FileBank\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use FileBank\Entity\Keyword;
+use FileBank\Entity\Version;
 
 /**
  * File entity.
  *
  * @ORM\Entity
- * @ORM\Table(name="FILEBANK")
+ * @ORM\Table(name="filebank")
  * @property int $id
  * @property string $name
  * @property int $size
@@ -18,6 +19,7 @@ use FileBank\Entity\Keyword;
  * @property string $isactive
  * @property string $savepath
  * @property ArrayCollection $keywords
+ * @property int $versionid
  */
 class File 
 {
@@ -67,12 +69,31 @@ class File
      * @var \Doctrine\Common\Collections\ArrayCollection
      */
     protected $keywords;
-
+    
+    /**
+     * @ORM\OneToMany(targetEntity="FileBank\Entity\Version", mappedBy="file")
+     * @ORM\OrderBy({"id" = "ASC"})
+     * @var \Doctrine\Common\Collections\ArrayCollection
+     */
+    protected $versions;
+    
+    /**
+     * @ORM\OneToOne(targetEntity="FileBank\Entity\Version", inversedBy="versionfile")
+     * @ORM\JoinColumn(name="version_id", referencedColumnName="id")
+     * @var FileBank\Entity\Version
+     */
+    protected $version;
+    
     /**
      * @var string $downloadUrl 
      */
     protected $url;
-
+    
+    /**
+     * @var string $absolutePath
+     */
+    protected $absolutePath;
+    
     /**
      * Getter for the file id
      * 
@@ -192,6 +213,19 @@ class File
     {
         $this->savepath = $value;
     }
+    
+    
+    public function getVersion()
+    {
+        return $this->version;
+    }
+    
+    public function setVersion(Version $version = null)
+    {
+        $this->version = $version;
+        
+        return $this;
+    }
 
     /**
      * Getter for the file's keywords
@@ -202,7 +236,7 @@ class File
     {
         return $this->keywords;
     }
-
+    
     /**
      * Setter for the file's keywords
      */
@@ -212,6 +246,26 @@ class File
         foreach ($keywords as $keyword) {
             if ($keyword instanceof FileBank\Entity\Keyword) {
                 $this->keywords->add($keyword);
+            }
+        }
+    }
+    
+    /**
+     * Getter for the file's versions
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getVersions()
+    {
+        return $this->versions;
+    }
+    
+    public function setVersions(Array $versions)
+    {
+        $this->versions->clear();
+        foreach ($versions as $version) {
+            if ($version instanceof FileBank\Entity\Version) {
+                $this->versions->add($version);
             }
         }
     }
@@ -234,6 +288,26 @@ class File
     public function setUrl($value) 
     {
         $this->url = $value;
+    }
+    
+    /**
+     * Getter for the file's download URL
+     *
+     * @return string
+     */
+    public function getAbsolutePath()
+    {
+        return $this->absolutePath;
+    }
+    
+    /**
+     * Setter for the file's download URL
+     *
+     * @param string $value
+     */
+    public function setAbsolutePath($value)
+    {
+        $this->absolutePath = $value;
     }
 
     /**

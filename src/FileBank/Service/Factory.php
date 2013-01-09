@@ -22,7 +22,7 @@ class Factory implements FactoryInterface
         $params = $config['FileBank']['params'];
         $em = $serviceLocator->get('doctrine.entitymanager.orm_default');
 
-        $manager = new Manager($params, $em);
+        $manager = new Manager($params, $em, $serviceLocator);
         return $manager;
     }
 }

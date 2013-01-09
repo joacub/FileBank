@@ -5,7 +5,7 @@ namespace FileBank;
 return array(
     __NAMESPACE__ => array(
         'params' => array(
-            'filebank_folder'  => '/data/filebank/', 
+            'filebank_folder'  => 'data/filebank/', 
             'default_is_active' => true,
             'chmod'           => 0755,
         ),
@@ -18,29 +18,49 @@ return array(
     'router' => array(
         'routes' => array(
             __NAMESPACE__ => array(
-                'type'    => 'segment',
+                'type' => 'segment', 
                 'options' => array(
-                    'route'    => '/files',
+                    'route' => '/files', 
                     'defaults' => array(
-                        'controller' => __NAMESPACE__ . '\Controller\File',
-                        'action'     => 'index',
+                        'controller' => __NAMESPACE__ . '\Controller\File', 
+                        'action' => 'index'
+                    )
+                ), 
+                'may_terminate' => true, 
+                'child_routes' => array(
+                    'Download' => array(
+                        'type' => 'segment', 
+                        'options' => array(
+                            'route' => '/d/:id{-/}[-:name]', 
+                            'constraints' => array(
+                                'id' => '[0-9]+',
+                                'name' => '[a-zA-Z0-9_-]+.[a-zA-Z0-9]+'
+                            ), 
+                            'defaults' => array(
+                                'controller' => __NAMESPACE__ .
+                                 '\Controller\File', 
+                                'action' => 'download'
+                            )
+                        )
+                    ), 
+                    'View' => array(
+                        'type' => 'segment', 
+                        'options' => array(
+                            'route' => '/:id{-/}[-:name]', 
+                            'constraints' => array(
+                                'id' => '[0-9]+', 
+                                'name' => '[a-zA-Z0-9_-]+.[a-zA-Z0-9_-]+'
+                            ), 
+                            'defaults' => array(
+                                'controller' => __NAMESPACE__ .
+                                 '\Controller\File', 
+                                'action' => 'view'
+                            )
+                        )
                     ),
-                ),
-            ),
-            __NAMESPACE__ . '-Download' => array(
-                'type'    => 'segment',
-                'options' => array(
-                    'route'    => '/files/:id',
-                    'constraints' => array(
-                        'id'     => '[0-9]+',
-                    ),
-                    'defaults' => array(
-                        'controller' => __NAMESPACE__ . '\Controller\File',
-                        'action'     => 'download',
-                    ),
-                ),
-            ),
-        ),
+                )
+            )
+        )
     ),
     'doctrine' => array(
         'connection' => array(

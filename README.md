@@ -1,5 +1,7 @@
 # FileBank module for Zend Framework 2
 
+BASED ON FILEBANK
+
 This module provides a way to store files in a structured database and file accessors to obtain the file for download or display without
 the need to setup public folders and worry about security and htaccess configurations. 
 
