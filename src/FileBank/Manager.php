@@ -153,8 +153,6 @@ class Manager
         if (isset($this->cache[$id])) {
             $entities = $this->cache[$id];
         } else {
-            $pluginUrl = $this->sl->get('viewrenderer')->getEngine()->plugin('url');
-            $pluginUrl instanceof Url;
             $list = "'" . implode("','", $keywords) . "'";
             
             $q = $this->em->createQuery(
