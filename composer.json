@@ -17,8 +17,8 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.3",
-        "doctrine/doctrine-orm-module": "dev-master",
-        "zendframework/zendframework": "dev-master"
+        "doctrine/doctrine-orm-module": "*",
+        "zendframework/zendframework": "*"
     },
     "autoload": {
         "psr-0": {
