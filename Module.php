@@ -38,7 +38,7 @@ class Module
     {
         return array(
             'factories' => array(
-                'getFileById' => function ($sm) {
+                'fileBank' => function ($sm) {
                     $locator = $sm->getServiceLocator();
                     $config = $locator->get('Configuration');
                     $params = $config['FileBank']['params'];

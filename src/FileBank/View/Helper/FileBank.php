@@ -3,13 +3,13 @@
 namespace FileBank\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
-use Zend\Http\Request;
+use FileBank\Manager;
 use FileBank\Entity\File;
 
 class FileBank extends AbstractHelper 
 {
     /**
-     * @var FileBank Service
+     * @var Manager Service
      */
     protected $service;
 
@@ -24,10 +24,26 @@ class FileBank extends AbstractHelper
      * @param integer $id
      * @return FileBank\Entity\File
      */
-    public function __invoke($id) {
+    public function __invoke() {
+        return $this;
+    }
+    
+    public function getFileById($id)
+    {
         $file = $this->service->getFileById($id);
-        $file = $this->generateDynamicParameters($file);
         return $file;
+    }
+    
+    public function getFilesByKeywords($keywords)
+    {
+        $files = $this->service->getFilesByKeywords($keywords);
+        return $files;
+    }
+    
+    public function getVersion(File $file, Array $version)
+    {
+        $version = $this->service->getVersion($file, $version);
+        return $version;
     }
 
     /**

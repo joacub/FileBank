@@ -110,7 +110,6 @@ class Manager
      * @return \FileBank\Entity\File 
      * @throws \Exception 
      */
-    
     public function getFileById($fileId)
     {
         // Get the entity from cache if available
@@ -131,6 +130,33 @@ class Manager
         // Cache the file entity so we don't have to access db on each call
         // Enables to get multiple entity's properties at different times
         $this->cache[$fileId] = $entity;
+        return $entity;
+    }
+    
+    /**
+     * Get the file entity based on ID
+     *
+     * @param string $path
+     * @return \FileBank\Entity\File
+     * @throws \Exception
+     */
+    public function getFileBySavePath($savePath)
+    {
+        // Get the entity from cache if available
+        if (isset($this->cache[$savePath])) {
+            $entity = $this->cache[$savePath];
+        } else {
+            $pluginUrl = $this->sl->get('viewrenderer')->getEngine()->plugin('url');
+            $pluginUrl instanceof Url;
+            $repository = $this->em->getRepository('FileBank\Entity\File');
+            $entity = $repository->findOneBy(array('savepath' => $savePath));
+            if($entity)
+                $this->generateDynamicParameters($entity);
+        }
+    
+        // Cache the file entity so we don't have to access db on each call
+        // Enables to get multiple entity's properties at different times
+        $this->cache[$savePath] = $entity;
         return $entity;
     }
     
@@ -226,6 +252,32 @@ class Manager
             throw new \Exception('File cannot be saved.');
         }
 
+        return $this->file;
+    }
+    
+    public function saveForFileManager($sourceFilePath, Array $keywords = null) 
+    {
+        $fileName = basename($sourceFilePath);
+        
+        
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mimetype = $finfo->buffer(file_get_contents($sourceFilePath));
+        
+        $this->file = new File();
+        $this->file->setName($fileName);
+        $this->file->setMimetype($mimetype);
+        $this->file->setSize($this->fixIntegerOverflow(filesize($sourceFilePath)));
+        $this->file->setIsActive($this->params['default_is_active']);
+        $this->file->setSavepath($sourceFilePath);
+        
+        if($keywords !== null)
+            $this->addKeywordsToFile($keywords);
+        
+        $this->em->persist($this->file);
+        $this->em->flush();
+        
+        $this->generateDynamicParameters($this->file);
+        
         return $this->file;
     }
     
@@ -396,7 +448,6 @@ class Manager
     public function createVersion(File $file, Array $versionOptions)
     {
         $version = $this->save(array($file->getAbsolutePath(), $file->getName()));
-        
         $thumb = $this->thumbnailer->create($version->getAbsolutePath());
         
         foreach($versionOptions as $methods) {
@@ -467,9 +518,15 @@ class Manager
             $urlHelper('FileBank/View', array('id' => $file->getId(), 'name' => $file->getName()))
         );
         
-        $file->setAbsolutePath(
-            $this->getRoot() . DIRECTORY_SEPARATOR . $file->getSavePath()
-        );
+        if(file_exists($file->getSavePath())) {
+            $file->setAbsolutePath(
+                $file->getSavePath()
+            );
+        } else { 
+            $file->setAbsolutePath(
+                $this->getRoot() . DIRECTORY_SEPARATOR . $file->getSavePath()
+            );
+        }
         
         return $file;
     }
