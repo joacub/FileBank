@@ -167,27 +167,46 @@ class Manager
      * @return Array
      * @throws \Exception 
      */
-    public function getFilesByKeywords($keywords)
+    public function getFilesByKeywords($keywords, $strict = false, $limit = null, $orderBy = '')
     {
         // Create unique ID of the array for cache
-        $id = md5(serialize($keywords));
+        $id = md5(serialize($keywords) . $strict);
         
         // Change all given keywords to lowercase
         $keywords = array_map('strtolower', $keywords );
+        
+        if($orderBy) {
+        	$orderBy = ' ORDER BY ' . $orderBy;
+        }
         
         // Get the entity from cache if available
         if (isset($this->cache[$id])) {
             $entities = $this->cache[$id];
         } else {
-            $list = "'" . implode("','", $keywords) . "'";
-            
-            $q = $this->em->createQuery(
-                    "select f from FileBank\Entity\File f, FileBank\Entity\Keyword k
+        	if($strict) {
+        		
+        		$q = $this->em->createQueryBuilder()->select('f')->from('FileBank\Entity\File', 'f');
+        		
+        		foreach($keywords as $k => $keyword) {
+        			$alias = 'k' . $k;
+        			$q->innerJoin('f.keywords', $alias, 'WITH', $alias.'.value = \'' . $keyword . '\'');
+        		}
+        		
+        		$q->setMaxResults($limit);
+        		
+        		$entities = $q->getQuery()->getResult();
+        		
+        	} else {
+        		$list = "'" . implode("','", $keywords) . "'";
+        		
+        		$q = $this->em->createQuery(
+        				"select f from FileBank\Entity\File f, FileBank\Entity\Keyword k
                      where k.file = f
-                     and k.value in (" . $list . ")"
-                    );
-            
-            $entities = $q->getResult();
+                     and k.value in (" . $list . ")" . $orderBy
+        		);
+        		$q->setMaxResults($limit);
+        		$entities = $q->getResult();
+        	}
             
             foreach ($entities as $e) {
                 $e instanceof \FileBank\Entity\File;
@@ -279,6 +298,14 @@ class Manager
         $this->generateDynamicParameters($this->file);
         
         return $this->file;
+    }
+    
+    public function saveFromLink($link, Array $keywords = null)
+    {
+    	$filename = 'data/' . basename($link);
+    	$contents = file_get_contents($link);
+    	file_put_contents($filename, $contents);
+    	return $this->save($filename, $keywords);
     }
     
     /**
@@ -416,27 +443,31 @@ class Manager
      * @param array $version
      * @return Ambigous <\FileBank\Ambigous, \FileBank\Entity\File, \FileBank\FileBank\Entity\File>
      */
-    public function getVersion(File $file, Array $version)
+    public function getVersion(File $file, Array $version, $options = array())
     {
         //dejamos solo los que nos sirven
-        $options = $this->filterOptions($version, $this->versionOptions);
+        $version = $this->filterOptions($version, $this->versionOptions);
         
-        $verionEncode = $this->getVersionEncode($options);
+        //dejamos solo los que nos sirven
+        $options = current($this->filterOptions(array($options), $this->thumbnailerDefaultOptions));
+        
+        $verionEncode = array($version, $options);
+        $verionEncode = $this->getVersionEncode($verionEncode);
         
         $versions = $file->getVersions();
         $versions instanceof \Doctrine\ORM\PersistentCollection;
         if($versions !== null && $versions->count() > 0) {
             
             $criteria = new \Doctrine\Common\Collections\Criteria();
-            
-            $collection = $versions->matching($criteria->where(new Comparison('value', Comparison::EQ, $verionEncode))->where(new Comparison('file', Comparison::EQ, $file)));
+            $criteria->andWhere(new Comparison('value', Comparison::EQ, $verionEncode))->andWhere(new Comparison('file', Comparison::EQ, $file));
+            $collection = $versions->matching($criteria);
             
             if($collection->count() > 0) {
                 return $this->generateDynamicParameters($collection->current()->getVersionFile());
             }
         }
         
-        return $this->createVersion($file, $options);
+        return $this->createVersion($file, $version, $options);
     }
     
     /**
@@ -445,10 +476,13 @@ class Manager
      * @param array $version
      * @return Ambigous <\FileBank\Entity\File, \FileBank\FileBank\Entity\File>
      */
-    public function createVersion(File $file, Array $versionOptions)
+    public function createVersion(File $file, Array $versionOptions, $options = array())
     {
+    	if(!@getimagesize($file->getAbsolutePath()))
+    		return false;
+    	
         $version = $this->save(array($file->getAbsolutePath(), $file->getName()));
-        $thumb = $this->thumbnailer->create($version->getAbsolutePath());
+        $thumb = $this->thumbnailer->create($version->getAbsolutePath(), $options);
         
         foreach($versionOptions as $methods) {
             foreach($methods as $method => $values) {
@@ -462,7 +496,7 @@ class Manager
         
         $versionEntity = new Version();
         
-        $versionEntity->setFile($file)->setValue($this->getVersionEncode($versionOptions));
+        $versionEntity->setFile($file)->setValue($this->getVersionEncode(array($versionOptions, $options)));
         
         $this->em->persist($versionEntity);
         $this->em->persist($version->setVersion($versionEntity));

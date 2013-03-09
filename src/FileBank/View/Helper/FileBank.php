@@ -34,15 +34,15 @@ class FileBank extends AbstractHelper
         return $file;
     }
     
-    public function getFilesByKeywords($keywords)
+    public function getFilesByKeywords($keywords, $strict = false, $limit = null, $orderBy = '')
     {
-        $files = $this->service->getFilesByKeywords($keywords);
+        $files = $this->service->getFilesByKeywords($keywords, $strict, $limit, $orderBy);
         return $files;
     }
     
-    public function getVersion(File $file, Array $version)
+    public function getVersion(File $file, Array $version, $options = array())
     {
-        $version = $this->service->getVersion($file, $version);
+        $version = $this->service->getVersion($file, $version, $options);
         return $version;
     }
 
