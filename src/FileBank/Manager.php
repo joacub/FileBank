@@ -305,7 +305,9 @@ class Manager
     	$filename = 'data/' . basename($link);
     	$contents = file_get_contents($link);
     	file_put_contents($filename, $contents);
-    	return $this->save($filename, $keywords);
+    	$file = $this->save($filename, $keywords);
+    	unset($filename);
+    	return $file;
     }
     
     /**
