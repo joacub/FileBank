@@ -24,7 +24,7 @@ class FileController extends AbstractActionController
         ->addHeaderLine('Content-Type',   $file->getMimetype())
         ->addHeaderLine('Content-Disposition', 'attachment; filename="' . $file->getName() . '"')
         ->addHeaderLine('Content-Transfer-Encoding', 'binary')
-        ->addHeaderLine('Expires', '0')
+        ->addHeaderLine('Expires', time())
         //1 semana
         ->addHeaderLine('Cache-Control', 'max-age=604800')
         ->addHeaderLine('Pragma', 'public')
@@ -60,7 +60,6 @@ class FileController extends AbstractActionController
         ->addHeaderLine('Content-Transfer-Encoding',   'binary')
         ->addHeaderLine('Content-Type',                $file->getMimetype())
         ->addHeaderLine('Content-Length',              $file->getSize())
-        ->addHeaderLine('Expires', '0')
         //1 semana
         ->addHeaderLine('Cache-Control', 'max-age=604800');
     
