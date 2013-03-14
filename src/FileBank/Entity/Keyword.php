@@ -3,6 +3,7 @@
 namespace FileBank\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Index as Index;
 use FileBank\Entity\File;
 
 /**
