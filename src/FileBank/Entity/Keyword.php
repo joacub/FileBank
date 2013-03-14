@@ -9,7 +9,7 @@ use FileBank\Entity\File;
  * Keyword entity.
  *
  * @ORM\Entity
- * @ORM\Table(name="filebank_keyword")
+ * @ORM\Table(name="filebank_keyword", indexes={@Index(name="value_index", columns={"value"})})
  * @property int $id
  * @property int $fileid
  * @property string $value
