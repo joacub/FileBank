@@ -60,7 +60,7 @@ class FileController extends AbstractActionController
         ->addHeaderLine('Content-Transfer-Encoding',   'binary')
         ->addHeaderLine('Content-Type',                $file->getMimetype())
         ->addHeaderLine('Content-Length',              $file->getSize())
-        ->addHeaderLine('Pragma', 'private')
+        ->addHeaderLine('Pragma', 'public')
         ->addHeaderLine('Expires', date(DATE_RFC822,strtotime(" 7 day")))
         //1 semana
         ->addHeaderLine('Cache-Control', 'max-age=604800');
