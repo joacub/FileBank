@@ -3,14 +3,13 @@
 namespace FileBank\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\Index as Index;
 use FileBank\Entity\File;
 
 /**
  * Keyword entity.
  *
  * @ORM\Entity
- * @ORM\Table(name="filebank_version", indexes={@Index(name="value_index", columns={"value"})})
+ * @ORM\Table(name="filebank_version")
  * @property int $id
  * @property int $fileid
  * @property string $value
