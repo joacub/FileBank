@@ -56,6 +56,10 @@ class FileController extends AbstractActionController
         $filePath = $file->getAbsolutePath();
         
         $response = $this->getResponse();
+        
+        $cacheControl = new \Zend\Http\Header\CacheControl();
+        $cacheControl->addDirective('s-maxage', (60*60*24*7));
+        
         $response->getHeaders()
         ->addHeaderLine('Content-Transfer-Encoding',   'binary')
         ->addHeaderLine('Content-Type',                $file->getMimetype())
@@ -64,7 +68,7 @@ class FileController extends AbstractActionController
         ->addHeaderLine('Expires', date(DATE_RFC822, (time() + (60*60*24*7))))
         ->addHeaderLine('Last-Modified: ' . gmdate('D, d M Y H:i:s', filectime($filePath)) . ' GMT')
         //1 semana
-        ->addHeaderLine('Cache-Control', 'max-age=604800');
+        ->addHeader($cacheControl);
     
         $response->setContent(file_get_contents($filePath));
         
