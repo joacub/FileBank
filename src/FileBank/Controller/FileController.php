@@ -62,6 +62,7 @@ class FileController extends AbstractActionController
         ->addHeaderLine('Content-Length',              $file->getSize())
         ->addHeaderLine('Pragma', 'public')
         ->addHeaderLine('Expires', date(DATE_RFC822,strtotime(" 7 day")))
+        ->addHeaderLine('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($filePath)) . ' GMT')
         //1 semana
         ->addHeaderLine('Cache-Control', 'max-age=604800');
     
