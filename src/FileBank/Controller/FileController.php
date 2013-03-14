@@ -58,7 +58,7 @@ class FileController extends AbstractActionController
         $response = $this->getResponse();
         
         $cacheControl = new \Zend\Http\Header\CacheControl();
-        $cacheControl->addDirective('s-maxage', (60*60*24*7));
+        $cacheControl->addDirective('max-age', (60*60*24*7));
         
         $response->getHeaders()
         ->addHeaderLine('Content-Transfer-Encoding',   'binary')
