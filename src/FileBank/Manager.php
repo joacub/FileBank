@@ -302,7 +302,14 @@ class Manager
     
     public function saveFromLink($link, Array $keywords = null)
     {
-    	$filename = 'data/' . basename($link);
+    	if(is_array($link)) {
+    		$_link = array_shift($link);
+    		$filename = array_shift($link);
+    		$link = $_link;
+    	} else {
+    		$filename = basename($link);
+    	}
+    	$filename = 'data/' . $filename;
     	$contents = file_get_contents($link);
     	file_put_contents($filename, $contents);
     	$file = $this->save($filename, $keywords);
