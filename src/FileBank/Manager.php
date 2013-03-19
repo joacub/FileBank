@@ -243,6 +243,12 @@ class Manager
         }
         
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        
+        $contents = @file_get_contents($sourceFilePath);
+        
+        if(!$contents)
+        	throw new \Exception('No se ha podido obtener el fichero o url:' . $sourceFilePath);
+        
         $mimetype = $finfo->buffer(file_get_contents($sourceFilePath));
         $hash     = md5(microtime(true) . $fileName);
         $savePath = substr($hash,0,1).'/'.substr($hash,1,1).'/';
@@ -310,7 +316,12 @@ class Manager
     		$filename = basename($link);
     	}
     	$filename = 'data/' . $filename;
-    	$contents = file_get_contents($link);
+    	$contents = @file_get_contents($link);
+    	
+    	if(!$contents) {
+    		throw new \Exception('ÇNo se ha podido obtener la url:' . $link);
+    	}
+    	
     	file_put_contents($filename, $contents);
     	$file = $this->save($filename, $keywords);
     	unset($filename);
