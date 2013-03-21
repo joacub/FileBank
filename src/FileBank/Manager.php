@@ -232,7 +232,7 @@ class Manager
      * @return File
      * @throws \Exception 
      */
-    public function save($sourceFilePath, Array $keywords = null)
+    public function save($sourceFilePath, Array $keywords = null, $createFile = true)
     {
         if(is_array($sourceFilePath)) {
             $_sourceFilePath = array_shift($sourceFilePath);
@@ -270,11 +270,13 @@ class Manager
         
         $absolutePath = $this->getRoot() . DIRECTORY_SEPARATOR . $savePath . $hash;
         
-        try {
-            $this->createPath($absolutePath, $this->params['chmod'], true);
-            copy($sourceFilePath, $absolutePath);
-        } catch (\Exception $e) {
-            throw new \Exception('File cannot be saved.');
+        if($createFile) {
+	        try {
+	            $this->createPath($absolutePath, $this->params['chmod'], true);
+	            copy($sourceFilePath, $absolutePath);
+	        } catch (\Exception $e) {
+	            throw new \Exception('File cannot be saved.');
+        	}
         }
 
         return $this->file;
@@ -477,7 +479,6 @@ class Manager
         $versions = $file->getVersions();
         $versions instanceof \Doctrine\ORM\PersistentCollection;
         if($versions !== null && $versions->count() > 0) {
-            
             $criteria = new \Doctrine\Common\Collections\Criteria();
             $criteria->andWhere(new Comparison('value', Comparison::EQ, $verionEncode))->andWhere(new Comparison('file', Comparison::EQ, $file));
             $collection = $versions->matching($criteria);
@@ -498,26 +499,16 @@ class Manager
      */
     public function createVersion(File $file, Array $versionOptions, $options = array())
     {
-    	if(!@getimagesize($file->getAbsolutePath()))
-    		return false;
-    	
-        $version = $this->save(array($file->getAbsolutePath(), $file->getName()));
-        $thumb = $this->thumbnailer->create($version->getAbsolutePath(), $options);
-        
-        foreach($versionOptions as $methods) {
-            foreach($methods as $method => $values) {
-                call_user_func_array(array($thumb, $method), $values);
-            }
-        }
-        
-        $thumb->save($version->getAbsolutePath());
-        
-        $version->setSize(filesize($version->getAbsolutePath()));
-        
+    	try {
+        $version = $this->save(array($file->getAbsolutePath(), $file->getName()), null, false);
+    	} catch(\Exception $e) {
+    		return new File();
+    	}
+         
         $versionEntity = new Version();
-        
+         
         $versionEntity->setFile($file)->setValue($this->getVersionEncode(array($versionOptions, $options)));
-        
+         
         $this->em->persist($versionEntity);
         $this->em->persist($version->setVersion($versionEntity));
         $this->em->flush();
@@ -525,9 +516,47 @@ class Manager
         return $version;
     }
     
+    public function createFileVersion(File $file)
+    {
+    	$version = $file->getVersion();
+    	if(!$file->getVersion() || file_exists($file->getAbsolutePath())) {
+    		return;
+    	}
+    	
+    	$allOptions = Json::decode($version->getValue(), Json::TYPE_ARRAY);
+    	$versionOptions = array_shift($allOptions);
+    	$options = array_shift($allOptions);
+    	
+    	try {
+    		$this->generateDynamicParameters($version->getFile());
+    		$this->createPath($version->getFile()->getAbsolutePath(), $this->params['chmod'], true);
+    		copy($version->getFile()->getAbsolutePath(), $file->getAbsolutePath());
+    	} catch (\Exception $e) {
+    		throw new \Exception('File cannot be saved.');
+    	}
+    	 
+    	$thumb = $this->thumbnailer->create($file->getAbsolutePath(), $options);
+    	
+    	foreach($versionOptions as $methods) {
+    		foreach($methods as $method => $values) {
+    			call_user_func_array(array($thumb, $method), $values);
+    		}
+    	}
+    	 
+    	$thumb->save($file->getAbsolutePath());
+    	
+    	$file->setSize(filesize($file->getAbsolutePath()));
+    	
+    	$this->em->persist($file);
+    	$this->em->flush();
+    	
+    	return $this;
+    	
+    }
+    
     public function getVersionEncode($version)
     {
-        return md5(Json::encode($version));
+        return Json::encode($version);
     }
     
     public function filterOptions($options, $defaultOptions)

@@ -80,7 +80,7 @@ class File
     /**
      * @ORM\OneToOne(targetEntity="FileBank\Entity\Version", inversedBy="versionfile")
      * @ORM\JoinColumn(name="version_id", referencedColumnName="id")
-     * @var FileBank\Entity\Version
+     * @var \FileBank\Entity\Version
      */
     protected $version;
     
@@ -214,7 +214,10 @@ class File
         $this->savepath = $value;
     }
     
-    
+    /**
+     * 
+     * @return \FileBank\Entity\Version
+     */
     public function getVersion()
     {
         return $this->version;

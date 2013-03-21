@@ -4,6 +4,7 @@ namespace FileBank\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Nette\Diagnostics\Debugger;
 
 class FileController extends AbstractActionController 
 {
@@ -17,6 +18,8 @@ class FileController extends AbstractActionController
 
         $file = $filelib->getFileById($id);
         $filePath = $file->getAbsolutePath();
+        
+        $filelib->createFileVersion($file);
         
         $response = $this->getResponse();
         $response->getHeaders()
@@ -54,6 +57,8 @@ class FileController extends AbstractActionController
     
         $file = $filelib->getFileById($id);
         $filePath = $file->getAbsolutePath();
+        
+        $filelib->createFileVersion($file);
         
         $response = $this->getResponse();
         
