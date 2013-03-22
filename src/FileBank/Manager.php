@@ -194,7 +194,7 @@ class Manager
         		
         		$q->setMaxResults($limit);
         		
-        		$entities = $q->getQuery()->getResult();
+        		$entities = $q->getQuery()->useResultCache(true, 180)->getResult();
         		
         	} else {
         		$list = "'" . implode("','", $keywords) . "'";
@@ -205,7 +205,7 @@ class Manager
                      and k.value in (" . $list . ")" . $orderBy
         		);
         		$q->setMaxResults($limit);
-        		$entities = $q->getResult();
+        		$entities = $q->useResultCache(true, 180)->getResult();
         	}
             
             foreach ($entities as $e) {
