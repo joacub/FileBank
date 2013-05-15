@@ -553,7 +553,7 @@ class Manager
     	
     	try {
     		$this->generateDynamicParameters($version->getFile());
-    		$this->createPath($version->getFile()->getAbsolutePath(), $this->params['chmod'], true);
+    		$this->createPath($file->getAbsolutePath(), $this->params['chmod'], true);
     		copy($version->getFile()->getAbsolutePath(), $file->getAbsolutePath());
     	} catch (\Exception $e) {
     		throw new \Exception('File cannot be saved.');
