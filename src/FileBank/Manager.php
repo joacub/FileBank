@@ -225,6 +225,14 @@ class Manager
         return $entities;
     }
     
+    public function saveEntity($fileEntity)
+    {
+    	$this->em->persist($fileEntity);
+    	$this->em->flush();
+    	
+    	$this->generateDynamicParameters($fileEntity);
+    }
+    
     /**
      * Save file to FileBank database
      * 
@@ -261,12 +269,9 @@ class Manager
         $this->file->setSavepath($savePath . $hash);
         
         if($keywords !== null)
-            $this->addKeywordsToFile($keywords);
+            $this->setKeywordsToFile($keywords, $this->file);
         
-        $this->em->persist($this->file);
-        $this->em->flush();
-        
-        $this->generateDynamicParameters($this->file);
+        $this->saveEntity($this->file);
         
         $absolutePath = $this->getRoot() . DIRECTORY_SEPARATOR . $savePath . $hash;
         
@@ -298,12 +303,9 @@ class Manager
         $this->file->setSavepath($sourceFilePath);
         
         if($keywords !== null)
-            $this->addKeywordsToFile($keywords);
+            $this->setKeywordsToFile($keywords, $this->file);
         
-        $this->em->persist($this->file);
-        $this->em->flush();
-        
-        $this->generateDynamicParameters($this->file);
+        $this->saveEntity($this->file);
         
         return $this->file;
     }
@@ -425,19 +427,41 @@ class Manager
      * @param FileBank\Entity\File $fileEntity
      * @return FileBank\Entity\File 
      */
-    protected function addKeywordsToFile($keywords) 
+    public function addKeywordsToFile($keywords, $fileEntity) 
     {
         $keywordEntities = array();
         
         foreach ($keywords as $word) {
             $keyword = new Keyword();
             $keyword->setValue(strtolower($word));
-            $keyword->setFile($this->file);
+            $keyword->setFile($fileEntity);
             $this->em->persist($keyword);
             
             $keywordEntities[] = $keyword;
         }
-        $this->file->setKeywords($keywordEntities);
+        $fileEntity->addKeywords($keywordEntities);
+    }
+    
+    /**
+     * Attach keywords to file entity
+     *
+     * @param array $keywords
+     * @param FileBank\Entity\File $fileEntity
+     * @return FileBank\Entity\File
+     */
+    public function setKeywordsToFile($keywords, $fileEntity)
+    {
+    	$keywordEntities = array();
+    
+    	foreach ($keywords as $word) {
+    		$keyword = new Keyword();
+    		$keyword->setValue(strtolower($word));
+    		$keyword->setFile($fileEntity);
+    		$this->em->persist($keyword);
+    
+    		$keywordEntities[] = $keyword;
+    	}
+    	$fileEntity->setKeywords($keywordEntities);
     }
     
     /**
@@ -446,7 +470,7 @@ class Manager
      * @param \FileBank\Entity\File $fileEntity
      * @return \FileBank\Manager
      */
-    protected function removeKeywordsToFile($fileEntity)
+    public function removeKeywordsToFile($fileEntity)
     {
         $keywords = $fileEntity->getKeywords();
         
@@ -599,6 +623,10 @@ class Manager
         $urlHelper = $this->sl->get('viewrenderer')->getEngine()->plugin('url');
         $file->setUrl(
             $urlHelper('FileBank/View', array('id' => $file->getId(), 'name' => $file->getName()))
+        );
+        
+        $file->setDownloadUrl(
+        		$urlHelper('FileBank/Download', array('id' => $file->getId(), 'name' => $file->getName()))
         );
         
         if(file_exists($file->getSavePath())) {

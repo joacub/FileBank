@@ -25,16 +25,15 @@ class FileController extends AbstractActionController
         $response->getHeaders()
         ->addHeaderLine('Content-Description', 'File Transfer')
         ->addHeaderLine('Content-Type',   $file->getMimetype())
-        ->addHeaderLine('Content-Disposition', 'attachment; filename="' . $file->getName() . '"')
+        ->addHeaderLine('Content-Disposition', 'attachment; filename=' . $file->getName() . '')
         ->addHeaderLine('Content-Transfer-Encoding', 'binary')
-        ->addHeaderLine('Expires', '0')
+        ->addHeaderLine('Expires', date(DATE_RFC822, (time() + (60*60*24*7))))
         //1 semana
         ->addHeaderLine('Cache-Control', 'max-age=604800')
         ->addHeaderLine('Pragma', 'public')
         ->addHeaderLine('Content-Length', $file->getSize());
         
         $content = file_get_contents($filePath);
-        
         $response->setContent($content);
         
         return $response;

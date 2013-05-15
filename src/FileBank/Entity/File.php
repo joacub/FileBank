@@ -90,6 +90,11 @@ class File
     protected $url;
     
     /**
+     * @var string $downloadUrl
+     */
+    protected $downloadUrl;
+    
+    /**
      * @var string $absolutePath
      */
     protected $absolutePath;
@@ -253,6 +258,15 @@ class File
         }
     }
     
+    public function addKeywords(Array $keywords)
+    {
+    	foreach ($keywords as $keyword) {
+    		if ($keyword instanceof FileBank\Entity\Keyword) {
+    			$this->keywords->add($keyword);
+    		}
+    	}
+    }
+    
     /**
      * Getter for the file's versions
      *
@@ -291,6 +305,26 @@ class File
     public function setUrl($value) 
     {
         $this->url = $value;
+    }
+    
+    /**
+     * Getter for the file's download URL
+     *
+     * @return string
+     */
+    public function getDownloadUrl()
+    {
+    	return $this->downloadUrl;
+    }
+    
+    /**
+     * Setter for the file's download URL
+     *
+     * @param string $value
+     */
+    public function setDownloadUrl($value)
+    {
+    	$this->downloadUrl = $value;
     }
     
     /**
