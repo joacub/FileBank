@@ -252,7 +252,7 @@ class File
     {
         $this->keywords->clear();
         foreach ($keywords as $keyword) {
-            if ($keyword instanceof FileBank\Entity\Keyword) {
+            if ($keyword instanceof Keyword) {
                 $this->keywords->add($keyword);
             }
         }
@@ -261,7 +261,7 @@ class File
     public function addKeywords(Array $keywords)
     {
     	foreach ($keywords as $keyword) {
-    		if ($keyword instanceof FileBank\Entity\Keyword) {
+    		if ($keyword instanceof Keyword) {
     			$this->keywords->add($keyword);
     		}
     	}

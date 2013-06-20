@@ -449,7 +449,7 @@ class Manager
      * @param FileBank\Entity\File $fileEntity
      * @return FileBank\Entity\File
      */
-    public function setKeywordsToFile($keywords, $fileEntity)
+    public function setKeywordsToFile($keywords, File $fileEntity)
     {
     	$keywordEntities = array();
     
@@ -461,6 +461,7 @@ class Manager
     
     		$keywordEntities[] = $keyword;
     	}
+    	$this->removeKeywordsToFile($fileEntity);
     	$fileEntity->setKeywords($keywordEntities);
     }
     
