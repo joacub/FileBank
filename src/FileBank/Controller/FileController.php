@@ -16,7 +16,12 @@ class FileController extends AbstractActionController
         $filelib = $this->getServiceLocator()->get('FileBank');
         $id = (int) $this->getEvent()->getRouteMatch()->getParam('id');
 
-        $file = $filelib->getFileById($id);
+        try {
+        	$file = $filelib->getFileById($id);
+        } catch (\Exception $e) {
+        	return $this->notFoundAction();
+        }
+        
         $filePath = $file->getAbsolutePath();
         
         $filelib->createFileVersion($file);
@@ -54,7 +59,12 @@ class FileController extends AbstractActionController
         $filelib = $this->getServiceLocator()->get('FileBank');
         $id = (int) $this->getEvent()->getRouteMatch()->getParam('id');
     
-        $file = $filelib->getFileById($id);
+    	try {
+        	$file = $filelib->getFileById($id);
+        } catch (\Exception $e) {
+        	return $this->notFoundAction();
+        }
+        
         $filePath = $file->getAbsolutePath();
         
         $filelib->createFileVersion($file);
