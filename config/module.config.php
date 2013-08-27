@@ -34,7 +34,7 @@ return array(
                             'route' => '/d/:id{-/}[-:name]', 
                             'constraints' => array(
                                 'id' => '[0-9]+',
-                                'name' => '[a-zA-Z0-9_-]+.[a-zA-Z0-9]+'
+                                //'name' => '[a-zA-Z0-9_-]+.[a-zA-Z0-9]+'
                             ), 
                             'defaults' => array(
                                 'controller' => __NAMESPACE__ .
@@ -49,7 +49,7 @@ return array(
                             'route' => '/:id{-/}[-:name]', 
                             'constraints' => array(
                                 'id' => '[0-9]+', 
-                                'name' => '[a-zA-Z0-9_-]+.[a-zA-Z0-9_-]+'
+                                //'name' => '[a-zA-Z0-9_-]+.[a-zA-Z0-9_-]+'
                             ), 
                             'defaults' => array(
                                 'controller' => __NAMESPACE__ .
