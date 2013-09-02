@@ -261,24 +261,25 @@ class Manager
         $hash     = md5(microtime(true) . $fileName);
         $savePath = substr($hash,0,1).'/'.substr($hash,1,1).'/';
 
-        $this->file = new File();
-        $this->file->setName($fileName);
-        $this->file->setMimetype($mimetype);
-        $this->file->setSize($this->fixIntegerOverflow(filesize($sourceFilePath)));
-        $this->file->setIsActive($this->params['default_is_active']);
-        $this->file->setSavepath($savePath . $hash);
-        
-        if($keywords !== null)
-            $this->setKeywordsToFile($keywords, $this->file);
-        
-        $this->saveEntity($this->file);
-        
         $absolutePath = $this->getRoot() . DIRECTORY_SEPARATOR . $savePath . $hash;
         
         if($createFile) {
 	        try {
 	            $this->createPath($absolutePath, $this->params['chmod'], true);
 	            copy($sourceFilePath, $absolutePath);
+	            
+	            $this->file = new File();
+	            $this->file->setName($fileName);
+	            $this->file->setMimetype($mimetype);
+	            $this->file->setSize($this->fixIntegerOverflow(filesize($sourceFilePath)));
+	            $this->file->setIsActive($this->params['default_is_active']);
+	            $this->file->setSavepath($savePath . $hash);
+	            
+	            if($keywords !== null)
+	            	$this->setKeywordsToFile($keywords, $this->file);
+	            
+	            $this->saveEntity($this->file);
+	            
 	        } catch (\Exception $e) {
 	            throw new \Exception('File cannot be saved.');
         	}
