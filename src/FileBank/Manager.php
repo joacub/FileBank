@@ -171,6 +171,7 @@ class Manager
     {
         // Create unique ID of the array for cache
         $id = md5(serialize($keywords) . $strict);
+        $keywordsId = serialize($keywords);
         
         // Change all given keywords to lowercase
         $keywords = array_map('strtolower', $keywords );
@@ -194,7 +195,7 @@ class Manager
         		
         		$q->setMaxResults($limit);
         		
-        		$entities = $q->getQuery()->useResultCache(true, 180)->getResult();
+        		$entities = $q->getQuery()->useResultCache(true, 180, $keywordsId)->getResult();
         		
         	} else {
         		$list = "'" . implode("','", $keywords) . "'";
@@ -205,7 +206,7 @@ class Manager
                      and k.value in (" . $list . ")" . $orderBy
         		);
         		$q->setMaxResults($limit);
-        		$entities = $q->useResultCache(true, 180)->getResult();
+        		$entities = $q->useResultCache(true, 180, $keywordsId)->getResult();
         	}
             
             foreach ($entities as $e) {
@@ -295,6 +296,11 @@ class Manager
         		$this->setKeywordsToFile($keywords, $this->file);
         	
         	$this->saveEntity($this->file);
+        	
+        }
+        
+        if($keywords !== null) {
+        	$this->em->getConnection()->getConfiguration()->getResultCacheImpl()->delete(md5(serialize($keywords)));
         }
 
         return $this->file;
