@@ -349,7 +349,7 @@ class Manager
     	
     	file_put_contents($filename, $contents);
     	$file = $this->save($filename, $keywords);
-    	unset($filename);
+    	unlink($filename);
     	return $file;
     }
     
