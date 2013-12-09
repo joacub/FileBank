@@ -640,15 +640,15 @@ class Manager
      * @param Array $linkOptions
      * @return FileBank\Entity\File
      */
-    public function generateDynamicParameters(File $file)
+    public function generateDynamicParameters(File $file, $options = array())
     {
         $urlHelper = $this->sl->get('viewrenderer')->getEngine()->plugin('url');
         $file->setUrl(
-            $urlHelper('FileBank/View', array('id' => $file->getId(), 'name' => $file->getName()))
+            $urlHelper('FileBank/View', array('id' => $file->getId(), 'name' => $file->getName()), $options)
         );
         
         $file->setDownloadUrl(
-        		$urlHelper('FileBank/Download', array('id' => $file->getId(), 'name' => $file->getName()))
+        		$urlHelper('FileBank/Download', array('id' => $file->getId(), 'name' => $file->getName()), $options)
         );
         
         if(file_exists($file->getSavePath())) {
