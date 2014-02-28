@@ -34,7 +34,7 @@ class FileController extends AbstractActionController
         ->addHeaderLine('Content-Transfer-Encoding', 'binary')
         ->addHeaderLine('Expires', date(DATE_RFC822, (time() + (60*60*24*7))))
         //1 semana
-        ->addHeaderLine('Cache-Control', 'must-revalidate')
+        ->addHeaderLine('Cache-Control', 's-max-age=604800')
         ->addHeaderLine('Pragma', 'public')
         ->addHeaderLine('Content-Length', $file->getSize());
         
@@ -79,7 +79,7 @@ class FileController extends AbstractActionController
         ->addHeaderLine('Expires', date(DATE_RFC822, (time() + (60*60*24*7))))
         ->addHeaderLine('Last-Modified', gmdate('D, d M Y H:i:s', filemtime($filePath)) . ' GMT')
         //1 semana
-        ->addHeaderLine('Cache-Control', 'must-revalidate');
+        ->addHeaderLine('Cache-Control', 's-max-age=604800');
     
         $response->setContent(file_get_contents($filePath));
         
