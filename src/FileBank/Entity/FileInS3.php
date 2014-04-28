@@ -11,7 +11,7 @@ use FileBank\Entity\Version;
  * File entity.
  *
  * @ORM\Entity
- * @ORM\Table(name="filebank")
+ * @ORM\Table(name="filebank_in_s3")
  * @property int $id
  * @property string $name
  * @property int $size
