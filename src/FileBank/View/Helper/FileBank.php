@@ -45,6 +45,11 @@ class FileBank extends AbstractHelper
         $version = $this->service->getVersion($file, $version, $options);
         return $version;
     }
+    
+    public function createFileVersion(File $file)
+    {
+        return $this->service->createFileVersion($file);
+    }
 
     /**
      * Add dynamic data into the entity
