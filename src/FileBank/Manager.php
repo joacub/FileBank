@@ -565,7 +565,7 @@ class Manager
      * @param array $version            
      * @return Ambigous <\FileBank\Ambigous, \FileBank\Entity\File, \FileBank\FileBank\Entity\File>
      */
-    public function getVersion(File $file, Array $version, $options = array(), $createFile = false)
+    public function getVersion(File $file, Array $version, $options = array())
     {
         // dejamos solo los que nos sirven
         $version = $this->filterOptions($version, $this->versionOptions);
@@ -594,7 +594,7 @@ class Manager
             }
         }
         
-        return $this->createVersion($file, $version, $options, $createFile);
+        return $this->createVersion($file, $version, $options);
     }
 
     /**
@@ -603,15 +603,14 @@ class Manager
      * @param array $version            
      * @return Ambigous <\FileBank\Entity\File, \FileBank\FileBank\Entity\File>
      */
-    public function createVersion(File $file, Array $versionOptions, $options = array(), $createFile = false)
+    public function createVersion(File $file, Array $versionOptions, $options = array())
     {
         try {
             $version = $this->save(array(
                 $file->getAbsolutePath(),
                 $file->getName()
-            ), null, $createFile);
+            ), null, false);
         } catch (\Exception $e) {
-            echo $e->getMessage();
             return new File();
         }
         
