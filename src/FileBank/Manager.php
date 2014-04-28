@@ -160,7 +160,6 @@ class Manager
     
     public function fileExistInS3(File $file)
     {
-        return true;
         $repo = $this->em->getRepository('FileBank\Entity\FileInS3');
         
         $result = $repo->findOneBy(array('file' => $file));
