@@ -172,7 +172,6 @@ class Manager
          	    $this->em->flush($fileInS3Entity);
          		return true;
          	} 
-         	exit;
          }
          
          return false;
