@@ -259,9 +259,7 @@ class Manager
         
         if(!$contents)
         	throw new \Exception('No se ha podido obtener el fichero o url:' . $sourceFilePath);
-        
-        echo $contents;exit;
-        
+        echo $sourceFilePath;Exit;
         $mimetype = $finfo->buffer(file_get_contents($sourceFilePath));
         $hash     = md5(microtime(true) . $fileName);
         $savePath = substr($hash,0,1).'/'.substr($hash,1,1).'/';
