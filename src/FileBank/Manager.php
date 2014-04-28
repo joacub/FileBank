@@ -611,6 +611,7 @@ class Manager
                 $file->getName()
             ), null, false);
         } catch (\Exception $e) {
+            echo $e->getMessage();exit;
             return new File();
         }
         
