@@ -265,10 +265,10 @@ class Manager
         $savePath = substr($hash,0,1).'/'.substr($hash,1,1).'/';
 
         $absolutePath = $this->getRoot() . DIRECTORY_SEPARATOR . $savePath . $hash;
-        var_dump($createFile);Exit;
         if($createFile) {
 	        try {
 	            $this->createPath($absolutePath, $this->params['chmod'], true);
+	            echo $sourceFilePath;exit;
 	            copy($sourceFilePath, $absolutePath);
 	            
 	            $this->file = new File();
