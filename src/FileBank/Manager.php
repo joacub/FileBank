@@ -766,7 +766,6 @@ class Manager
             $file->setDownloadUrl($this->params['s3_base_url'] . $this->params['filebank_folder_aws_s3'] . $file->getSavePath());
             
         } else {
-            exit;
             $urlHelper = $this->sl->get('viewrenderer')
                 ->getEngine()
                 ->plugin('url');
