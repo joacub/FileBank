@@ -61,6 +61,21 @@ return array(
                             )
                         )
                     ),
+                    'GenVersions' => array(
+                        'type' => 'segment',
+                        'options' => array(
+                            'route' => '/:id{-/}[-:name]',
+                            'constraints' => array(
+                                'id' => '[0-9]+',
+                                //'name' => '[a-zA-Z0-9_-]+.[a-zA-Z0-9_-]+'
+                            ),
+                            'defaults' => array(
+                                'controller' => __NAMESPACE__ .
+                                '\Controller\File',
+                                'action' => 'view'
+                            )
+                        )
+                    ),
                 )
             )
         )

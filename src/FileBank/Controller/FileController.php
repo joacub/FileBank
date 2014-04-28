@@ -5,6 +5,8 @@ namespace FileBank\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Nette\Diagnostics\Debugger;
+use FileBank\Manager;
+use FileBank\Entity\File;
 
 class FileController extends AbstractActionController 
 {
@@ -59,15 +61,8 @@ class FileController extends AbstractActionController
         $filelib = $this->getServiceLocator()->get('FileBank');
         $id = (int) $this->getEvent()->getRouteMatch()->getParam('id');
     
-    	try {
-        	$file = $filelib->getFileById($id);
-        } catch (\Exception $e) {
-        	return $this->notFoundAction();
-        }
-        
-        $filePath = $file->getAbsolutePath();
-        
-        $filelib->createFileVersion($file);
+    	$file = $this->getFileAndGenerete($id);
+    	$filePath = $file->getAbsolutePath();
         
         $response = $this->getResponse();
         
@@ -84,6 +79,36 @@ class FileController extends AbstractActionController
         $response->setContent(file_get_contents($filePath));
         
         return $response;
+    }
+    
+    /**
+     * 
+     * @param unknown $id
+     * @return File
+     */
+    protected function getFileAndGenerete($id)
+    {
+        $filelib = $this->getServiceLocator()->get('FileBank');
+        try {
+        	$file = $filelib->getFileById($id);
+        } catch (\Exception $e) {
+        	return $this->notFoundAction();
+        }
+        
+        $filelib->createFileVersion($file);
+        
+        return $file;
+    }
+    
+    public function genereteVersionsAction() 
+    {
+        $filelib = $this->getServiceLocator()->get('FileBank');
+        $filelib instanceof Manager;
+        
+        $files = $filelib->getFilesNotInAwsS3();
+        foreach($files as $file) {
+            $this->getFileAndGenerete($file->getId());
+        }
     }
     
 }
