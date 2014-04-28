@@ -5,6 +5,9 @@ namespace FileBank;
 return array(
     __NAMESPACE__ => array(
         'params' => array(
+            'use_aws_s3' => false,
+            'filebank_folder_aws_s3'  => 'data/filebank/',
+            's3_base_url' => 'http://s3.com/',
             'filebank_folder'  => 'data/filebank/', 
             'default_is_active' => true,
             'chmod'           => 0755,
