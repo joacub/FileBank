@@ -658,8 +658,12 @@ class Manager
     public function createFileVersion(File $file)
     {
         $version = $file->getVersion();
-        if (! $version || !file_exists($file->getAbsolutePath())) {
+        if (! $version || file_exists($file->getAbsolutePath())) {
             return;
+        }
+        
+        if(!file_exists($version->getFile()->getAbsolutePath())) {
+        	return;
         }
         
         $allOptions = Json::decode($version->getValue(), Json::TYPE_ARRAY);
