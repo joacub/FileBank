@@ -642,17 +642,7 @@ class Manager
      */
     public function generateDynamicParameters(File $file, $options = array())
     {
-        if(file_exists($file->getSavePath())) {
-            $file->setAbsolutePath(
-                $file->getSavePath()
-            );
-        } else {
-            $file->setAbsolutePath(
-                $this->getRoot() . DIRECTORY_SEPARATOR . $file->getSavePath()
-            );
-        }
-        
-        if($this->params['use_aws_s3'] && file_exists($file->getAbsolutePath())) {
+        if($this->params['use_aws_s3']) {
             $file->setUrl(
                 $this->params['s3_base_url'] . $this->params['filebank_folder_aws_s3'] . $file->getSavePath()
             );
@@ -660,6 +650,16 @@ class Manager
             $file->setDownloadUrl(
                 $this->params['s3_base_url'] . $this->params['filebank_folder_aws_s3'] . $file->getSavePath()
             );
+            
+            if(file_exists($file->getSavePath())) {
+                $file->setAbsolutePath(
+                    $file->getSavePath()
+                );
+            } else {
+                $file->setAbsolutePath(
+                    $this->getRoot() . DIRECTORY_SEPARATOR . $file->getSavePath()
+                );
+            }
             
         } else {
             $urlHelper = $this->sl->get('viewrenderer')->getEngine()->plugin('url');
@@ -671,6 +671,15 @@ class Manager
                 $urlHelper('FileBank/Download', array('id' => $file->getId(), 'name' => $file->getName()), $options)
             );
             
+            if(file_exists($file->getSavePath())) {
+                $file->setAbsolutePath(
+                    $file->getSavePath()
+                );
+            } else {
+                $file->setAbsolutePath(
+                    $this->getRoot() . DIRECTORY_SEPARATOR . $file->getSavePath()
+                );
+            }
         }
         
         return $file;
