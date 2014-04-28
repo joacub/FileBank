@@ -64,7 +64,7 @@ return array(
                     'GenVersions' => array(
                         'type' => 'segment',
                         'options' => array(
-                            'route' => '/:id{-/}[-:name]',
+                            'route' => '/generete-versions',
                             'constraints' => array(
                                 'id' => '[0-9]+',
                                 //'name' => '[a-zA-Z0-9_-]+.[a-zA-Z0-9_-]+'
