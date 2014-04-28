@@ -761,6 +761,8 @@ class Manager
                 $this->createFileVersion($file);
             }
             
+            echo 'aqui';
+            
             $file->setUrl($this->params['s3_base_url'] . $this->params['filebank_folder_aws_s3'] . $file->getSavePath());
             
             $file->setDownloadUrl($this->params['s3_base_url'] . $this->params['filebank_folder_aws_s3'] . $file->getSavePath());
