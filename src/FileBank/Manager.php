@@ -486,6 +486,12 @@ class Manager
         }
         
         $this->filesPreparedToRemove[] = $e->getAbsolutePath();
+        
+        $repo = $this->em->getRepository('FileBank\Entity\FileInS3');
+        $resultInS3 = $repo->findOneBy(array('file' => $e));
+        if($resultInS3) {
+            $this->em->remove($resultInS3);
+        }
         $this->em->remove($e);
         $this->removeKeywordsToFile($e);
         
