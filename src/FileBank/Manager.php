@@ -652,7 +652,7 @@ class Manager
     public function createFileVersion(File $file)
     {
         $version = $file->getVersion();
-        if (! $file->getVersion() || file_exists($file->getAbsolutePath())) {
+        if (! $version || !file_exists($file->getAbsolutePath())) {
             return;
         }
         
@@ -748,9 +748,7 @@ class Manager
         
         if ($this->params['use_aws_s3']) {
             if(!$this->fileExistInS3($file)) {
-                //solo si es una version lo sacamos
-                if($file->getVersion())
-                    $this->createFileVersion($file);
+                $this->createFileVersion($file);
             }
             
             $file->setUrl($this->params['s3_base_url'] . $this->params['filebank_folder_aws_s3'] . $file->getSavePath());
