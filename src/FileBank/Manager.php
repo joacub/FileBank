@@ -12,6 +12,7 @@ use Nette\Diagnostics\Debugger;
 use Doctrine\Common\Collections\Expr\Comparison;
 use FileBank\Entity\Version;
 use Zend\Debug\Debug;
+use FileBank\Entity\FileInS3;
 
 class Manager
 {
@@ -157,13 +158,23 @@ class Manager
         return $files;
     }
     
-    public function fileExistInS3($file)
+    public function fileExistInS3(File $file)
     {
         $repo = $this->em->getRepository('FileBank\Entity\FileInS3');
         
         $result = $repo->findOneBy(array('file' => $file));
         
-        return ($result instanceof File);
+         if(!$result instanceof File) {
+         	if(file_exists($file->getAbsolutePath())) {
+         	    $fileInS3Entity = new FileInS3();
+         	    $fileInS3Entity->setFile($file);
+         	    $this->em->persist($fileInS3Entity);
+         	    $this->em->flush($fileInS3Entity);
+         		return true;
+         	} 
+         }
+         
+         return false;
     
     }
 
@@ -729,6 +740,12 @@ class Manager
      */
     public function generateDynamicParameters(File $file, $options = array())
     {
+        if (file_exists($file->getSavePath())) {
+            $file->setAbsolutePath($file->getSavePath());
+        } else {
+            $file->setAbsolutePath($this->getRoot() . DIRECTORY_SEPARATOR . $file->getSavePath());
+        }
+        
         if ($this->params['use_aws_s3']) {
             if(!$this->fileExistInS3($file)) {
                 $this->createFileVersion($file);
@@ -738,11 +755,6 @@ class Manager
             
             $file->setDownloadUrl($this->params['s3_base_url'] . $this->params['filebank_folder_aws_s3'] . $file->getSavePath());
             
-            if (file_exists($file->getSavePath())) {
-                $file->setAbsolutePath($file->getSavePath());
-            } else {
-                $file->setAbsolutePath($this->getRoot() . DIRECTORY_SEPARATOR . $file->getSavePath());
-            }
         } else {
             $urlHelper = $this->sl->get('viewrenderer')
                 ->getEngine()
