@@ -268,9 +268,9 @@ class Manager
         if($createFile) {
 	        try {
 	            $this->createPath($absolutePath, $this->params['chmod'], true);
-	            echo $sourceFilePath;exit;
+	           
 	            copy($sourceFilePath, $absolutePath);
-	            
+	            echo $absolutePath;exit;
 	            $this->file = new File();
 	            $this->file->setName($fileName);
 	            $this->file->setMimetype($mimetype);
