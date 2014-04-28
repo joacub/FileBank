@@ -162,9 +162,9 @@ class Manager
     {
         $repo = $this->em->getRepository('FileBank\Entity\FileInS3');
         
-        $result = $repo->findOneBy(array('file' => $file->getId()));
+        $result = $repo->findOneBy(array('file' => $file));
         
-         if(!$result instanceof File) {
+         if(!$result instanceof FileInS3) {
          	if(file_exists($file->getAbsolutePath())) {
          	    $fileInS3Entity = new FileInS3();
          	    $fileInS3Entity->setFile($file);
