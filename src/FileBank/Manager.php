@@ -339,7 +339,7 @@ class Manager
         if (! $contents)
             throw new \Exception('No se ha podido obtener el fichero o url:' . $sourceFilePath);
         
-        $mimetype = $finfo->buffer(file_get_contents($sourceFilePath));
+        $mimetype = $finfo->buffer($contents);
         $hash = md5(microtime(true) . $fileName);
         $savePath = substr($hash, 0, 1) . '/' . substr($hash, 1, 1) . '/';
         
@@ -348,7 +348,7 @@ class Manager
         if ($createFile) {
             try {
                 $this->createPath($absolutePath, $this->params['chmod'], true);
-                copy($sourceFilePath, $absolutePath);
+                file_put_contents($absolutePath, $contents);
                 
                 $this->file = new File();
                 $this->file->setName($fileName);
@@ -673,7 +673,7 @@ class Manager
         try {
             $this->generateDynamicParameters($version->getFile());
             $this->createPath($file->getAbsolutePath(), $this->params['chmod'], true);
-            copy($version->getFile()->getAbsolutePath(), $file->getAbsolutePath());
+            file_put_contents($file->getAbsolutePath(), file_get_contents($version->getFile()->getAbsolutePath()));
         } catch (\Exception $e) {
             throw new \Exception('File cannot be saved.');
         }
