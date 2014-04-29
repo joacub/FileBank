@@ -678,16 +678,16 @@ class Manager
             throw new \Exception('File cannot be saved.');
         }
         
-        $thumb = $this->thumbnailer->create($file->getAbsolutePath(), $options);
+//         $thumb = $this->thumbnailer->create($file->getAbsolutePath(), $options);
         
-        foreach ($versionOptions as $methods) {
-            foreach ($methods as $method => $values) {
-                call_user_func_array(array(
-                    $thumb,
-                    $method
-                ), $values);
-            }
-        }
+//         foreach ($versionOptions as $methods) {
+//             foreach ($methods as $method => $values) {
+//                 call_user_func_array(array(
+//                     $thumb,
+//                     $method
+//                 ), $values);
+//             }
+//         }
         
         $thumb->save($file->getAbsolutePath());
         
