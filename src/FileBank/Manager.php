@@ -1120,10 +1120,8 @@ class Manager
      * @param Array $params            
      * @param \Doctrine\ORM\EntityManager $em            
      */
-    public function __construct($params = null, EntityManager $em = null, ServiceLocatorInterface $sl = null)
+    public function __construct($params, EntityManager $em, ServiceLocatorInterface $sl)
     {
-        var_dump(array_search('image/jpeg', $this->mimeTypesMap));
-        exit;
         $this->params = $params;
         $this->em = $em;
         $this->cache = array();
