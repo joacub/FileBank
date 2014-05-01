@@ -1356,7 +1356,7 @@ class Manager
                 $this->file->setMimetype($mimetype);
                 $this->file->setSize($this->fixIntegerOverflow(filesize($sourceFilePath)));
                 $this->file->setIsActive($this->params['default_is_active']);
-                $this->file->setSavepath($savePath . $hash);
+                $this->file->setSavepath($savePath . $hash . '.' . $ext);
                 
                 if ($keywords !== null)
                     $this->setKeywordsToFile($keywords, $this->file);
@@ -1371,7 +1371,7 @@ class Manager
             $this->file->setMimetype($mimetype);
             $this->file->setSize($this->fixIntegerOverflow(filesize($sourceFilePath)));
             $this->file->setIsActive($this->params['default_is_active']);
-            $this->file->setSavepath($savePath . $hash);
+            $this->file->setSavepath($savePath . $hash . '.' . $ext);
             
             if ($keywords !== null)
                 $this->setKeywordsToFile($keywords, $this->file);
