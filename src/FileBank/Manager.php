@@ -1346,7 +1346,7 @@ class Manager
         
         $absolutePath = $this->getRoot() . DIRECTORY_SEPARATOR . $savePath . $hash . '.' . $ext;
         
-        if ($createFile) {
+        if ($createFile || true) {
             try {
                 $this->createPath($absolutePath, $this->params['chmod'], true);
                 copy($sourceFilePath, $absolutePath);
