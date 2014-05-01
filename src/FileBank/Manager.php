@@ -1655,7 +1655,7 @@ class Manager
         $this->em->persist($version->setVersion($versionEntity));
         $this->em->flush();
         
-        $this->createFileVersion($versionEntity);
+        $this->createFileVersion($versionEntity->getVersionFile());
         
         return $version;
     }
