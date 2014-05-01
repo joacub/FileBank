@@ -1760,9 +1760,9 @@ class Manager
         }
         
         if ($this->params['use_aws_s3']) {
-            if (! $this->fileExistInS3($file)) {
-                $this->createFileVersion($file);
-            }
+//             if (! $this->fileExistInS3($file)) {
+//                 $this->createFileVersion($file);
+//             }
             
             $file->setUrl($this->params['s3_base_url'] . $this->params['filebank_folder_aws_s3'] . $file->getSavePath());
             
