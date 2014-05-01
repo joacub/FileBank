@@ -1322,7 +1322,7 @@ class Manager
      * @return File
      * @throws \Exception
      */
-    public function save($sourceFilePath, Array $keywords = null, $createFile = true)
+    public function save($sourceFilePath, Array $keywords = null, $createFile = true, $isVersion = false)
     {
         if (is_array($sourceFilePath)) {
             $_sourceFilePath = array_shift($sourceFilePath);
@@ -1346,7 +1346,7 @@ class Manager
         
         $absolutePath = $this->getRoot() . DIRECTORY_SEPARATOR . $savePath . $hash . '.' . $ext;
         
-        if ($createFile || true) {
+        if ($isVersion === false) {
             try {
                 $this->createPath($absolutePath, $this->params['chmod'], true);
                 copy($sourceFilePath, $absolutePath);
@@ -1639,7 +1639,7 @@ class Manager
             $version = $this->save(array(
                 $file->getAbsolutePath(),
                 $file->getName()
-            ), null, false);
+            ), null, false, true);
         } catch (\Exception $e) {
             return new File();
         }
@@ -1656,7 +1656,7 @@ class Manager
         $this->em->flush();
         $this->em->refresh($versionEntity);
         
-        $this->createFileVersion($versionEntity->getFile());
+        $this->createFileVersion($versionEntity->getVersionFile());
         
         return $version;
     }
