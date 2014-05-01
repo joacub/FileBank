@@ -1818,7 +1818,7 @@ class Manager
         return $size;
     }
 
-    public function getExtension($fileName, $mymeType)
+    public function getExtension($fileName, $mimeType)
     {
         //filename solo es un nombre no existe como fichero asi que solo se puede usar getExtension
         $spl = new \SplFileInfo($fileName);
