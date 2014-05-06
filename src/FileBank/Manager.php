@@ -1835,4 +1835,9 @@ class Manager
         
     	return array_search($mimeType, $this->mimeTypesMap);
     }
+    
+    public function getParams()
+    {
+        return $this->params;
+    }
 }

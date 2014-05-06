@@ -16,6 +16,7 @@ class FileController extends AbstractActionController
     public function downloadAction() 
     {
         $filelib = $this->getServiceLocator()->get('FileBank');
+        $filelib instanceof Manager;
         $id = (int) $this->getEvent()->getRouteMatch()->getParam('id');
 
         try {
@@ -59,10 +60,16 @@ class FileController extends AbstractActionController
     public function viewAction()
     {
         $filelib = $this->getServiceLocator()->get('FileBank');
+        $filelib instanceof Manager;
         $id = (int) $this->getEvent()->getRouteMatch()->getParam('id');
     
     	$file = $this->getFileAndGenerete($id);
     	$filePath = $file->getAbsolutePath();
+    	
+    	$params = $filelib->getParams();
+    	if($params['use_aws_s3'] && $params['redirect_to_s3']) {
+    	    return $this->redirect()->toUrl($file->getUrl());
+    	}
         
         $response = $this->getResponse();
         

@@ -6,6 +6,7 @@ return array(
     __NAMESPACE__ => array(
         'params' => array(
             'use_aws_s3' => false,
+            'redirect_to_s3' => true,
             'filebank_folder_aws_s3'  => 'data/filebank/',
             's3_base_url' => 'http://s3.com/',
             'filebank_folder'  => 'data/filebank/', 
