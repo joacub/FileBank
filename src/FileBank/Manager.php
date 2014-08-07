@@ -1597,11 +1597,15 @@ class Manager
      * @param array $version            
      * @return Ambigous <\FileBank\Ambigous, \FileBank\Entity\File, \FileBank\FileBank\Entity\File>
      */
-    public function getVersion(File $file, Array $version, $options = array())
+    public function getVersion(File $file, Array $version, $options = array(), $fileEmpty = null)
     {
         if(self::$versionCount > 3) {
-        	return false;
+            if($fileEmpty)
+        	   return $fileEmpty;
+            return new File();
         }
+        
+        self::$versionCount++;
         // dejamos solo los que nos sirven
         $version = $this->filterOptions($version, $this->versionOptions);
         
