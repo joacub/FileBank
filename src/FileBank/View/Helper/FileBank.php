@@ -40,9 +40,9 @@ class FileBank extends AbstractHelper
         return $files;
     }
     
-    public function getVersion(File $file, Array $version, $options = array())
+    public function getVersion(File $file, Array $version, $options = array(), $fileEmpty = null)
     {
-        $version = $this->service->getVersion($file, $version, $options);
+        $version = $this->service->getVersion($file, $version, $options, $fileEmpty);
         return $version;
     }
     
