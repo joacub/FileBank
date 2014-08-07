@@ -1608,6 +1608,7 @@ class Manager
         }
         
         self::$versionCount++;
+        
         // dejamos solo los que nos sirven
         $version = $this->filterOptions($version, $this->versionOptions);
         
