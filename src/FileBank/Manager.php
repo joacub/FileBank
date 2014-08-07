@@ -1600,6 +1600,7 @@ class Manager
     public function getVersion(File $file, Array $version, $options = array(), $fileEmpty = null)
     {
         if(self::$versionCount > 3) {
+            var_dump(get_class($fileEmpty));exit;
             if($fileEmpty)
         	   $file = $fileEmpty;
             $file = new File();
