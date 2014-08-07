@@ -1588,6 +1588,8 @@ class Manager
         
         return $this;
     }
+    
+    static private $versionCount = 0;
 
     /**
      *
@@ -1597,6 +1599,9 @@ class Manager
      */
     public function getVersion(File $file, Array $version, $options = array())
     {
+        if(self::$versionCount > 3) {
+        	return false;
+        }
         // dejamos solo los que nos sirven
         $version = $this->filterOptions($version, $this->versionOptions);
         
