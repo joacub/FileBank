@@ -1601,11 +1601,13 @@ class Manager
     {
         if(self::$versionCount > 3) {
             if($fileEmpty)
-        	   return $file = $fileEmpty;
+        	   $file = $fileEmpty;
             $file = new File();
             
             return $this->generateDynamicParameters($file);
         }
+        
+        self::$versionCount++;
         
         // dejamos solo los que nos sirven
         $version = $this->filterOptions($version, $this->versionOptions);
@@ -1634,7 +1636,7 @@ class Manager
             }
         }
         
-        self::$versionCount++;
+//         self::$versionCount++;
         return $this->createVersion($file, $version, $options);
     }
 
