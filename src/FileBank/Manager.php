@@ -1599,8 +1599,6 @@ class Manager
      */
     public function getVersion(File $file, Array $version, $options = array(), $fileEmpty = null)
     {
-        Debugger::$productionMode = false;
-        Debugger::dump(self::$versionCount);
         if(self::$versionCount > 3) {
             if($fileEmpty)
         	   return $file = $fileEmpty;
