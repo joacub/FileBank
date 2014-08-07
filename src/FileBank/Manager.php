@@ -1599,10 +1599,14 @@ class Manager
      */
     public function getVersion(File $file, Array $version, $options = array(), $fileEmpty = null)
     {
+        Debugger::$productionMode = false;
+        Debugger::dump(self::$versionCount);
         if(self::$versionCount > 3) {
             if($fileEmpty)
-        	   return $fileEmpty;
-            return new File();
+        	   return $file = $fileEmpty;
+            $file = new File();
+            
+            return $this->generateDynamicParameters($file);
         }
         
         self::$versionCount++;
