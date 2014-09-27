@@ -1352,7 +1352,7 @@ class Manager
                 $resultCopy = copy($sourceFilePath, $absolutePath);
 
                 if(!$resultCopy)
-                    throw new \Exception('File cannot be saved.');
+                    throw new \Exception('File cannot be saved.' . $sourceFilePath . ' => ' . $absolutePath);
 
                 $this->file = new File();
                 $this->file->setName($fileName);
@@ -1366,7 +1366,7 @@ class Manager
                 
                 $this->saveEntity($this->file);
             } catch (\Exception $e) {
-                throw new \Exception('File cannot be saved.');
+                throw new \Exception('File cannot be saved.' . $e->getMessage());
             }
         } else {
             $this->file = new File();
