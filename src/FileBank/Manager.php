@@ -1349,8 +1349,11 @@ class Manager
         if ($isVersion === false) {
             try {
                 $this->createPath($absolutePath, $this->params['chmod'], true);
-                copy($sourceFilePath, $absolutePath);
-                
+                $resultCopy = copy($sourceFilePath, $absolutePath);
+
+                if(!$resultCopy)
+                    throw new \Exception('File cannot be saved.');
+
                 $this->file = new File();
                 $this->file->setName($fileName);
                 $this->file->setMimetype($mimetype);
