@@ -1352,7 +1352,7 @@ class Manager
                 $resultCopy = copy($sourceFilePath, $absolutePath);
 
                 if(!$resultCopy)
-                    throw new \Exception('File cannot be saved.' . $sourceFilePath . ' => ' . $absolutePath);
+                    throw new \Exception('File cannot be saved.' . $sourceFilePath . '=>'. realpath($sourceFilePath) . ' => ' . $absolutePath);
 
                 $this->file = new File();
                 $this->file->setName($fileName);
