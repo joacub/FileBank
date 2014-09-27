@@ -1767,6 +1767,9 @@ class Manager
      */
     public function generateDynamicParameters(File $file, $options = array())
     {
+        if(!$file->getId())
+            return $file;
+
         if (file_exists($file->getSavePath())) {
             $file->setAbsolutePath($file->getSavePath());
         } else {
@@ -1777,9 +1780,9 @@ class Manager
 //             if (! $this->fileExistInS3($file)) {
 //                 $this->createFileVersion($file);
 //             }
-            
+
             $file->setUrl($this->params['s3_base_url'] . $this->params['filebank_folder_aws_s3'] . $file->getSavePath());
-            
+
             $file->setDownloadUrl($this->params['s3_base_url'] . $this->params['filebank_folder_aws_s3'] . $file->getSavePath());
         } else {
             $urlHelper = $this->sl->get('viewrenderer')
@@ -1801,7 +1804,7 @@ class Manager
                 $file->setAbsolutePath($this->getRoot() . DIRECTORY_SEPARATOR . $file->getSavePath());
             }
         }
-        
+
         return $file;
     }
 

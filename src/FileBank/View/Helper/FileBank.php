@@ -59,11 +59,8 @@ class FileBank extends AbstractHelper
      * @return FileBank\Entity\File
      */
     public function generateDynamicParameters(File $file) {
-        $urlHelper = $this->getView()->plugin('url');
 
-        $file->setUrl(
-                $urlHelper('FileBank') . '/' . $file->getId()
-        );
+        $this->service->generateDynamicParameters($file);
 
         return $file;
     }
