@@ -1349,8 +1349,11 @@ class Manager
         if ($isVersion === false) {
             try {
                 $this->createPath($absolutePath, $this->params['chmod'], true);
-                copy($sourceFilePath, $absolutePath);
-                
+                $resultCopy = copy($sourceFilePath, $absolutePath);
+
+                if(!$resultCopy)
+                    throw new \Exception('File cannot be saved.' . $sourceFilePath . '=>'. realpath($sourceFilePath) . ' => ' . $absolutePath);
+
                 $this->file = new File();
                 $this->file->setName($fileName);
                 $this->file->setMimetype($mimetype);
@@ -1363,7 +1366,7 @@ class Manager
                 
                 $this->saveEntity($this->file);
             } catch (\Exception $e) {
-                throw new \Exception('File cannot be saved.');
+                throw new \Exception('File cannot be saved.' . $e->getMessage());
             }
         } else {
             $this->file = new File();
@@ -1767,6 +1770,9 @@ class Manager
      */
     public function generateDynamicParameters(File $file, $options = array())
     {
+        if(!$file->getId())
+            return $file;
+
         if (file_exists($file->getSavePath())) {
             $file->setAbsolutePath($file->getSavePath());
         } else {
@@ -1777,9 +1783,9 @@ class Manager
 //             if (! $this->fileExistInS3($file)) {
 //                 $this->createFileVersion($file);
 //             }
-            
+
             $file->setUrl($this->params['s3_base_url'] . $this->params['filebank_folder_aws_s3'] . $file->getSavePath());
-            
+
             $file->setDownloadUrl($this->params['s3_base_url'] . $this->params['filebank_folder_aws_s3'] . $file->getSavePath());
         } else {
             $urlHelper = $this->sl->get('viewrenderer')
@@ -1801,7 +1807,7 @@ class Manager
                 $file->setAbsolutePath($this->getRoot() . DIRECTORY_SEPARATOR . $file->getSavePath());
             }
         }
-        
+
         return $file;
     }
 
