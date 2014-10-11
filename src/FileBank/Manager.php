@@ -1248,7 +1248,7 @@ class Manager
      * @return Array
      * @throws \Exception
      */
-    public function getFilesByKeywords($keywords, $strict = false, $limit = null, $orderBy = '')
+    public function getFilesByKeywords($keywords, $strict = false, $limit = null, $orderBy = '', $useCache = true)
     {
         // Create unique ID of the array for cache
         $id = md5(serialize($keywords) . $strict);
@@ -1262,7 +1262,7 @@ class Manager
         }
         
         // Get the entity from cache if available
-        if (isset($this->cache[$id])) {
+        if (isset($this->cache[$id]) && $useCache) {
             $entities = $this->cache[$id];
         } else {
             if ($strict) {
