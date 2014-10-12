@@ -1600,9 +1600,9 @@ class Manager
      * @param array $version            
      * @return Ambigous <\FileBank\Ambigous, \FileBank\Entity\File, \FileBank\FileBank\Entity\File>
      */
-    public function getVersion(File $file, Array $version, $options = array(), $fileEmpty = null)
+    public function getVersion(File $file, Array $version, $options = array(), $fileEmpty = null, $forceCreate = false)
     {
-        if(self::$versionCount > 3) {
+        if(self::$versionCount > 3 && $forceCreate !== true) {
             $file = new File();
             if($fileEmpty)
         	   $file = $fileEmpty;
