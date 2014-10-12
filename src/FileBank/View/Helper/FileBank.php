@@ -34,9 +34,9 @@ class FileBank extends AbstractHelper
         return $file;
     }
     
-    public function getFilesByKeywords($keywords, $strict = false, $limit = null, $orderBy = '')
+    public function getFilesByKeywords($keywords, $strict = false, $limit = null, $orderBy = '', $useCache = true)
     {
-        $files = $this->service->getFilesByKeywords($keywords, $strict, $limit, $orderBy);
+        $files = $this->service->getFilesByKeywords($keywords, $strict, $limit, $orderBy, $useCache);
         return $files;
     }
     
