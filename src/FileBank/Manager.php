@@ -1843,14 +1843,12 @@ class Manager
         //filename solo es un nombre no existe como fichero asi que solo se puede usar getExtension
         $spl = new \SplFileInfo($fileName);
 
+        $ext = false;
+
         if (version_compare(PHP_VERSION, '5.3.6') >= 0) {
             $ext = $spl->getExtension();
-        } else {
-            $ext = $spl->getFileInfo();
-            var_dump($ext);exit;
         }
 
-        
         if(isset($this->mimeTypesMap[$ext]))
             return $ext;
         
