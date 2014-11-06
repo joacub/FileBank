@@ -1841,6 +1841,7 @@ class Manager
     public function getExtension($fileName, $mimeType)
     {
         //filename solo es un nombre no existe como fichero asi que solo se puede usar getExtension
+        var_dump(file_exists($fileName));
         echo $fileName;exit;
         $spl = new \SplFileInfo($fileName);
         $ext = $spl->getExtension();
