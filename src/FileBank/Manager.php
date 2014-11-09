@@ -1630,10 +1630,13 @@ class Manager
             $criteria = new \Doctrine\Common\Collections\Criteria();
             $criteria->andWhere(new Comparison('value', Comparison::EQ, $verionEncode))->andWhere(new Comparison('file', Comparison::EQ, $file));
             $collection = $versions->matching($criteria);
-            
-            if ($collection->count() > 0) {
-                return $this->generateDynamicParameters($collection->current()
-                    ->getVersionFile());
+
+            if ($collection->count() > 0 && ($versionFile = $collection->current()
+                    ->getVersionFile()) !== null) {
+                return $this->generateDynamicParameters($versionFile);
+            } else {
+                $file = $fileEmpty;
+                return $this->generateDynamicParameters($file);
             }
         }
         
