@@ -1634,9 +1634,10 @@ class Manager
             if ($collection->count() > 0 && ($versionFile = $collection->current()
                     ->getVersionFile()) !== null) {
                 return $this->generateDynamicParameters($versionFile);
-            } 
+            }
         }
-        
+
+        exit;
         self::$versionCount++;
         return $this->createVersion($file, $version, $options);
     }
