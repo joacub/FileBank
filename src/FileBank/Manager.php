@@ -1636,8 +1636,7 @@ class Manager
                 return $this->generateDynamicParameters($versionFile);
             }
         }
-
-        exit;
+        
         self::$versionCount++;
         return $this->createVersion($file, $version, $options);
     }
