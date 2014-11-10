@@ -1635,6 +1635,8 @@ class Manager
                     ->getVersionFile()) !== null) {
                 return $this->generateDynamicParameters($versionFile);
             } else {
+                if($fileEmpty === null)
+                    return new File();
                 $file = $fileEmpty;
                 return $this->generateDynamicParameters($file);
             }
