@@ -1630,13 +1630,13 @@ class Manager
             $criteria = new \Doctrine\Common\Collections\Criteria();
             $criteria->andWhere(new Comparison('value', Comparison::EQ, $verionEncode))->andWhere(new Comparison('file', Comparison::EQ, $file));
             $collection = $versions->matching($criteria);
-            
-            if ($collection->count() > 0) {
-                return $this->generateDynamicParameters($collection->current()
-                    ->getVersionFile());
+
+            if ($collection->count() > 0 && ($versionFile = $collection->current()
+                    ->getVersionFile()) !== null) {
+                return $this->generateDynamicParameters($versionFile);
             }
         }
-        
+
         self::$versionCount++;
         return $this->createVersion($file, $version, $options);
     }
@@ -1846,8 +1846,13 @@ class Manager
     {
         //filename solo es un nombre no existe como fichero asi que solo se puede usar getExtension
         $spl = new \SplFileInfo($fileName);
-        $ext = $spl->getExtension();
-        
+
+        $ext = false;
+
+        if (version_compare(PHP_VERSION, '5.3.6') >= 0) {
+            $ext = $spl->getExtension();
+        }
+
         if(isset($this->mimeTypesMap[$ext]))
             return $ext;
         
