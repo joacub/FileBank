@@ -1694,6 +1694,10 @@ class Manager
             $this->generateDynamicParameters($version->getFile());
             $this->createPath($file->getAbsolutePath(), $this->params['chmod'], true);
             copy($version->getFile()->getAbsolutePath(), $file->getAbsolutePath());
+            //in case of s3 bucket is posibol file is not exist faster
+            if(!file_exists($file->getAbsolutePath()))
+                return;
+
         } catch (\Exception $e) {
             throw new \Exception('File cannot be saved.');
         }
