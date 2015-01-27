@@ -1595,6 +1595,15 @@ class Manager
             foreach ($keywords as $keyword) {
                 $this->em->remove($keyword);
             }
+
+            if($keywords !== null && !empty($this->params['use_cache'])) {
+
+                foreach ($keywords as $keyword) {
+                    $this->em->getConnection()->getConfiguration()->getResultCacheImpl()->delete(md5(serialize(array($keyword))));
+                }
+
+                $this->em->getConnection()->getConfiguration()->getResultCacheImpl()->delete(md5(serialize($keywords)));
+            }
         }
         
         return $this;
