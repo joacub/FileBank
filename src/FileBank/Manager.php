@@ -1277,9 +1277,13 @@ class Manager
                 }
                 
                 $q->setMaxResults($limit);
-                
-                // $entities = $q->getQuery()->useResultCache(true, 180, $keywordsId)->getResult();
-                $entities = $q->getQuery()->getResult();
+
+                if(!empty($this->params['use_cache'])) {
+                    $entities = $q->getQuery()->useResultCache(true, 180, $keywordsId)->getResult();
+                } else {
+                    $entities = $q->getQuery()->getResult();
+                }
+
             } else {
                 $list = "'" . implode("','", $keywords) . "'";
                 
@@ -1287,8 +1291,12 @@ class Manager
                      where k.file = f
                      and k.value in (" . $list . ")" . $orderBy);
                 $q->setMaxResults($limit);
-                // $entities = $q->useResultCache(true, 180, $keywordsId)->getResult();
-                $entities = $q->getResult();
+                if(!empty($this->params['use_cache'])) {
+                    $entities = $q->useResultCache(true, 180, $keywordsId)->getResult();
+                } else {
+                    $entities = $q->getResult();
+                }
+
             }
             
             foreach ($entities as $e) {
@@ -1382,9 +1390,9 @@ class Manager
             $this->saveEntity($this->file);
         }
         
-        // if($keywords !== null) {
-        // $this->em->getConnection()->getConfiguration()->getResultCacheImpl()->delete(md5(serialize($keywords)));
-        // }
+         if($keywords !== null && !empty($this->params['use_cache'])) {
+         $this->em->getConnection()->getConfiguration()->getResultCacheImpl()->delete(md5(serialize($keywords)));
+         }
         
         return $this->file;
     }
@@ -1602,14 +1610,7 @@ class Manager
      */
     public function getVersion(File $file, Array $version, $options = array(), $fileEmpty = null, $forceCreate = false)
     {
-        if(self::$versionCount > 3 && $forceCreate !== true) {
-            $file = new File();
-            if($fileEmpty)
-        	   $file = $fileEmpty;
-            
-            return $this->generateDynamicParameters($file);
-        }
-        
+
         // dejamos solo los que nos sirven
         $version = $this->filterOptions($version, $this->versionOptions);
         
@@ -1637,7 +1638,28 @@ class Manager
             }
         }
 
-        self::$versionCount++;
+        if(!empty($this->params['create_version_in_ajax'])) {
+            $encodeParams = array(
+                'fileId' => $file->getId(),
+                'version' => $version,
+                'options' => $options,
+                'fileEmpty' => ($fileEmpty !== null ? $fileEmpty->getId() : null)
+            );
+
+            $encodeParams = Json::encode($encodeParams);
+
+            $fileInAjax = new File();
+
+            $urlHelper = $this->sl->get('viewrenderer')
+                ->getEngine()
+                ->plugin('url');
+            $fileInAjax->setUrl($urlHelper('FileBank/CreateVersionInAjax', array(
+                'data' => $encodeParams,
+            )));
+
+            return $fileInAjax;
+        }
+
         return $this->createVersion($file, $version, $options);
     }
 
@@ -1861,5 +1883,10 @@ class Manager
     public function getParams()
     {
         return $this->params;
+    }
+
+    public function disableCreateInAjax()
+    {
+        $this->params['create_version_in_ajax'] = false;
     }
 }

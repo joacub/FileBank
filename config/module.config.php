@@ -7,6 +7,8 @@ return array(
         'params' => array(
             'use_aws_s3' => false,
             'redirect_to_s3' => true,
+            'use_cache' => true,
+            'create_version_in_ajax' => true,
             'filebank_folder_aws_s3'  => 'data/filebank/',
             's3_base_url' => 'http://s3.com/',
             'filebank_folder'  => 'data/filebank/', 
@@ -74,6 +76,17 @@ return array(
                                 'controller' => __NAMESPACE__ .
                                 '\Controller\File',
                                 'action' => 'view'
+                            )
+                        )
+                    ),
+                    'CreateVersionInAjax' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => '/create-version-in-ajax.:data',
+                            'defaults' => array(
+                                'controller' => __NAMESPACE__ .
+                                '\Controller\File',
+                                'action' => 'create-version-in-ajax'
                             )
                         )
                     ),
