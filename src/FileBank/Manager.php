@@ -1720,6 +1720,7 @@ class Manager
         }
 
         var_dump($version->getFile()->getAbsolutePath());
+        var_dump($version->getFile()->getSavePath());
         exit('Filebank Test Create Version´s');
 
         if (! file_exists($version->getFile()->getAbsolutePath())) {
