@@ -1719,6 +1719,8 @@ class Manager
             return;
         }
 
+        var_dump($version->getFile()->getAbsolutePath());
+
         if (! file_exists($version->getFile()->getAbsolutePath())) {
             return;
         }
