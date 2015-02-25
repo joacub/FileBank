@@ -1719,9 +1719,7 @@ class Manager
             return;
         }
 
-        var_dump($version->getFile()->getAbsolutePath());
-        var_dump($version->getFile()->getSavePath());
-        exit('Filebank Test Create Version´s');
+        $this->generateDynamicParameters($version->getFile());
 
         if (! file_exists($version->getFile()->getAbsolutePath())) {
             return;
@@ -1736,7 +1734,7 @@ class Manager
         try {
 
 
-            $this->generateDynamicParameters($version->getFile());
+
             $this->createPath($file->getAbsolutePath(), $this->params['chmod'], true);
 
             copy($version->getFile()->getAbsolutePath(), $file->getAbsolutePath());
