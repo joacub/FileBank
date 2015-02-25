@@ -1723,8 +1723,6 @@ class Manager
             return;
         }
 
-        exit;
-        
         $allOptions = Json::decode($version->getValue(), Json::TYPE_ARRAY);
         $versionOptions = array_shift($allOptions);
         $options = array_shift($allOptions);
@@ -1733,6 +1731,7 @@ class Manager
 
 
             $this->generateDynamicParameters($version->getFile());
+            exit('Filebank Test Create Version´s');
             $this->createPath($file->getAbsolutePath(), $this->params['chmod'], true);
 
             copy($version->getFile()->getAbsolutePath(), $file->getAbsolutePath());
