@@ -1720,11 +1720,12 @@ class Manager
         }
 
         var_dump($version->getFile()->getAbsolutePath());
+        exit('Filebank Test Create Version´s');
 
         if (! file_exists($version->getFile()->getAbsolutePath())) {
             return;
         }
-        exit('Filebank Test Create Version´s');
+
 
 
         $allOptions = Json::decode($version->getValue(), Json::TYPE_ARRAY);
