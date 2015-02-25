@@ -1718,10 +1718,12 @@ class Manager
         if (! $version || file_exists($file->getAbsolutePath())) {
             return;
         }
-        exit('Filebank Test Create Version´s');
+
         if (! file_exists($version->getFile()->getAbsolutePath())) {
             return;
         }
+        exit('Filebank Test Create Version´s');
+
 
         $allOptions = Json::decode($version->getValue(), Json::TYPE_ARRAY);
         $versionOptions = array_shift($allOptions);
