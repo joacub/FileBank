@@ -1729,8 +1729,9 @@ class Manager
             header("Pragma: no-cache");
 
             $this->generateDynamicParameters($version->getFile());
-            $this->createPath($file->getAbsolutePath(), $this->params['chmod'], true);
             exit;
+            $this->createPath($file->getAbsolutePath(), $this->params['chmod'], true);
+
             copy($version->getFile()->getAbsolutePath(), $file->getAbsolutePath());
             //in case of s3 bucket is posibol file is not exist faster
             if(!file_exists($file->getAbsolutePath()) || !is_writable($file->getAbsolutePath()))
