@@ -1719,11 +1719,11 @@ class Manager
             return;
         }
 
-        exit;
-        
         if (! file_exists($version->getFile()->getAbsolutePath())) {
             return;
         }
+
+        exit;
         
         $allOptions = Json::decode($version->getValue(), Json::TYPE_ARRAY);
         $versionOptions = array_shift($allOptions);
