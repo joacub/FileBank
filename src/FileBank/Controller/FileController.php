@@ -123,7 +123,11 @@ class FileController extends AbstractActionController
     {
 
         $data = $this->params('data');
-        $data = Json::decode($data, Json::TYPE_ARRAY);
+        try {
+            $data = Json::decode($data, Json::TYPE_ARRAY);
+        } catch(\Exception $e) {
+            return $this->notFoundAction();
+        }
         $filelib = $this->getServiceLocator()->get('FileBank');
         /**
          * @var Manager $filelib
