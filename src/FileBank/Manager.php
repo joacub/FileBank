@@ -1318,7 +1318,7 @@ class Manager
     public function saveEntity($fileEntity)
     {
         $this->em->persist($fileEntity);
-        $this->em->flush();
+        $this->em->flush($fileEntity);
         
         $this->generateDynamicParameters($fileEntity);
     }
@@ -1698,7 +1698,8 @@ class Manager
         
         $this->em->persist($versionEntity);
         $this->em->persist($version->setVersion($versionEntity));
-        $this->em->flush();
+        $this->em->flush($versionEntity);
+        $this->em->flush($version);
         $this->em->refresh($versionEntity);
         
         $this->createFileVersion($versionEntity->getVersionFile());
