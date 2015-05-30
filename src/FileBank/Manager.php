@@ -1464,7 +1464,7 @@ class Manager
     {
         $this->_remove($e);
         try {
-            $this->em->flush();
+            $this->em->flush($e);
             $this->_removeCurrentFiles();
             $this->_removeCurrentVersions();
         } catch (\Exception $exception) {
@@ -1529,10 +1529,10 @@ class Manager
         if ($this->versionsPreparedToRemove) {
             foreach ($this->versionsPreparedToRemove as $version) {
                 $this->em->remove($version);
+                $this->em->flush($version);
             }
         }
         
-        $this->em->flush();
         $this->filesPreparedToRemove = array();
     }
 
@@ -1757,7 +1757,7 @@ class Manager
         $file->setSize(filesize($file->getAbsolutePath()));
         
         $this->em->persist($file);
-        $this->em->flush();
+        $this->em->flush($file);
         
         return $this;
     }
