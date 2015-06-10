@@ -1462,9 +1462,10 @@ class Manager
      */
     public function remove(File $e)
     {
+        $this->em->getConnection()->exec('SET foreign_key_checks = 0;');
         $this->_remove($e);
         try {
-            $this->em->flush();
+            $this->em->flush($e);
             $this->_removeCurrentFiles();
             $this->_removeCurrentVersions();
         } catch (\Exception $exception) {
@@ -1474,6 +1475,8 @@ class Manager
             throw $exception;
             // algo fue mal y no se borro nada
         }
+
+        $this->em->getConnection()->exec('SET foreign_key_checks = 1;');
         
         return $this;
     }
@@ -1529,10 +1532,11 @@ class Manager
         if ($this->versionsPreparedToRemove) {
             foreach ($this->versionsPreparedToRemove as $version) {
                 $this->em->remove($version);
+                $this->em->flush($version);
             }
         }
         
-        $this->em->flush();
+
         $this->filesPreparedToRemove = array();
     }
 
@@ -1757,7 +1761,7 @@ class Manager
         $file->setSize(filesize($file->getAbsolutePath()));
         
         $this->em->persist($file);
-        $this->em->flush();
+        $this->em->flush($file);
         
         return $this;
     }
