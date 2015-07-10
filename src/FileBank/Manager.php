@@ -1472,6 +1472,7 @@ class Manager
             /*
              * Debug::dump($exception->getMessage()); exit;
              */
+            $this->em->getConnection()->exec('SET foreign_key_checks = 1;');
             throw $exception;
             // algo fue mal y no se borro nada
         }
