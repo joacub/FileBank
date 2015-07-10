@@ -1465,7 +1465,7 @@ class Manager
         $this->em->getConnection()->exec('SET foreign_key_checks = 0;');
         $this->_remove($e);
         try {
-            $this->em->flush($e);
+            $this->em->flush();
             $this->_removeCurrentFiles();
             $this->_removeCurrentVersions();
         } catch (\Exception $exception) {
@@ -1492,15 +1492,10 @@ class Manager
         
         if ($versions->count() > 0) {
             foreach ($versions as $version) {
+                $this->versionsPreparedToRemove[] = $version;
                 if ($version->getVersionFile()) {
-                    $version->setFile(null);
-                    $this->em->persist($version);
-                    $this->em->flush($version);
-                    $this->em->refresh($version);
                     $this->_remove($version->getVersionFile());
                 }
-
-                $this->versionsPreparedToRemove[] = $version;
             }
         }
         
@@ -1536,8 +1531,9 @@ class Manager
         if ($this->versionsPreparedToRemove) {
             foreach ($this->versionsPreparedToRemove as $version) {
                 $this->em->remove($version);
-                $this->em->flush();
             }
+
+            $this->em->flush();
         }
         
 
