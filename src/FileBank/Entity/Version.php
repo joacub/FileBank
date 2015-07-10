@@ -32,7 +32,7 @@ class Version
     protected $file;
     
     /**
-     * @ORM\OneToOne(targetEntity="FileBank\Entity\File", mappedBy="version")
+     * @ORM\OneToOne(targetEntity="FileBank\Entity\File", mappedBy="version", cascade={"persist", "remove"})
      */
     protected $versionfile;
     

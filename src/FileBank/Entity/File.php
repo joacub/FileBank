@@ -78,7 +78,7 @@ class File
     protected $versions;
     
     /**
-     * @ORM\OneToOne(targetEntity="FileBank\Entity\Version", inversedBy="versionfile")
+     * @ORM\OneToOne(targetEntity="FileBank\Entity\Version", inversedBy="versionfile", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="version_id", referencedColumnName="id")
      * @var \FileBank\Entity\Version
      */
