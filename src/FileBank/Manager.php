@@ -1492,13 +1492,15 @@ class Manager
         
         if ($versions->count() > 0) {
             foreach ($versions as $version) {
-                $this->versionsPreparedToRemove[] = $version;
                 if ($version->getVersionFile()) {
                     $version->setFile(null);
                     $this->em->persist($version);
                     $this->em->flush($version);
+                    $this->em->refresh($version);
                     $this->_remove($version->getVersionFile());
                 }
+
+                $this->versionsPreparedToRemove[] = $version;
             }
         }
         
