@@ -1495,6 +1495,8 @@ class Manager
                 $this->versionsPreparedToRemove[] = $version;
                 if ($version->getVersionFile()) {
                     $version->setFile(null);
+                    $this->em->persist($version);
+                    $this->em->flush($version);
                     $this->_remove($version->getVersionFile());
                 }
             }
