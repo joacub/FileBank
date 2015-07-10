@@ -1534,11 +1534,9 @@ class Manager
     protected function _removeCurrentVersions()
     {
         if ($this->versionsPreparedToRemove) {
-            $this->em->clear();
             foreach ($this->versionsPreparedToRemove as $version) {
-                $this->em->detach($version);
                 $this->em->remove($version);
-                $this->em->flush($version);
+                $this->em->flush();
             }
         }
         
