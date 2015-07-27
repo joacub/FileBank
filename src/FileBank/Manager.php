@@ -1381,6 +1381,7 @@ class Manager
                             $this->em->getConnection(),
                             $this->em->getConfiguration()
                         );
+                        $this->saveEntity($this->file);
                         $this->em->close();
                     }
                 } else {
