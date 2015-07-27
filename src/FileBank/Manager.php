@@ -1117,8 +1117,8 @@ class Manager
     /**
      * Set the Module specific configuration parameters
      *
-     * @param Array $params            
-     * @param \Doctrine\ORM\EntityManager $em            
+     * @param Array $params
+     * @param \Doctrine\ORM\EntityManager $em
      */
     public function __construct($params, EntityManager $em, ServiceLocatorInterface $sl)
     {
@@ -1143,29 +1143,29 @@ class Manager
     {
         $repo = $this->em->getRepository('FileBank\Entity\FileInS3');
         $qb = $repo->createQueryBuilder('a');
-        
+
         $repoFileInS3 = $this->em->getRepository('FileBank\Entity\FileInS3');
         $qbfs3 = $repoFileInS3->createQueryBuilder('s3');
         $qbfs3->select('IDENTITY(s3.file)');
-        
+
         $qb->where($qb->expr()
             ->notIn('m.id', $qbfs3->getDQL()));
         $files = $qb->setMaxResults($limit)
             ->getQuery()
             ->getResult();
-        
+
         return $files;
     }
 
     public function fileExistInS3(File $file)
     {
         $repo = $this->em->getRepository('FileBank\Entity\FileInS3');
-        
+
         $result = $repo->findOneBy(array(
             'file' => $file
         ));
-        
-        if (! $result instanceof FileInS3) {
+
+        if (!$result instanceof FileInS3) {
             if (file_exists($file->getAbsolutePath())) {
                 $fileInS3Entity = new FileInS3();
                 $fileInS3Entity->setFile($file);
@@ -1174,14 +1174,14 @@ class Manager
                 return true;
             }
         }
-        
+
         return false;
     }
 
     /**
      * Get the file entity based on ID
      *
-     * @param integer $fileId            
+     * @param integer $fileId
      * @return \FileBank\Entity\File
      * @throws \Exception
      */
@@ -1199,11 +1199,11 @@ class Manager
             if ($entity)
                 $this->generateDynamicParameters($entity);
         }
-        
-        if (! $entity) {
+
+        if (!$entity) {
             throw new \Exception('File does not exist.', 404);
         }
-        
+
         // Cache the file entity so we don't have to access db on each call
         // Enables to get multiple entity's properties at different times
         $this->cache[$fileId] = $entity;
@@ -1213,7 +1213,7 @@ class Manager
     /**
      * Get the file entity based on ID
      *
-     * @param string $path            
+     * @param string $path
      * @return \FileBank\Entity\File
      * @throws \Exception
      */
@@ -1234,7 +1234,7 @@ class Manager
             if ($entity)
                 $this->generateDynamicParameters($entity);
         }
-        
+
         // Cache the file entity so we don't have to access db on each call
         // Enables to get multiple entity's properties at different times
         $this->cache[$savePath] = $entity;
@@ -1244,7 +1244,7 @@ class Manager
     /**
      * Get array of file entities based on given keyword
      *
-     * @param Array $keywords            
+     * @param Array $keywords
      * @return Array
      * @throws \Exception
      */
@@ -1253,32 +1253,32 @@ class Manager
         // Create unique ID of the array for cache
         $id = md5(serialize($keywords) . $strict);
         $keywordsId = serialize($keywords);
-        
+
         // Change all given keywords to lowercase
         $keywords = array_map('strtolower', $keywords);
-        
+
         if ($orderBy) {
             $orderBy = ' ORDER BY ' . $orderBy;
         }
-        
+
         // Get the entity from cache if available
         if (isset($this->cache[$id]) && $useCache) {
             $entities = $this->cache[$id];
         } else {
             if ($strict) {
-                
+
                 $q = $this->em->createQueryBuilder()
                     ->select('f')
                     ->from('FileBank\Entity\File', 'f');
-                
+
                 foreach ($keywords as $k => $keyword) {
                     $alias = 'k' . $k;
                     $q->innerJoin('f.keywords', $alias, 'WITH', $alias . '.value = \'' . $keyword . '\'');
                 }
-                
+
                 $q->setMaxResults($limit);
 
-                if(!empty($this->params['use_cache'])) {
+                if (!empty($this->params['use_cache'])) {
                     $entities = $q->getQuery()->useResultCache(true, 180, $keywordsId)->getResult();
                 } else {
                     $entities = $q->getQuery()->getResult();
@@ -1286,32 +1286,32 @@ class Manager
 
             } else {
                 $list = "'" . implode("','", $keywords) . "'";
-                
+
                 $q = $this->em->createQuery("select f from FileBank\Entity\File f, FileBank\Entity\Keyword k
                      where k.file = f
                      and k.value in (" . $list . ")" . $orderBy);
                 $q->setMaxResults($limit);
-                if(!empty($this->params['use_cache'])) {
+                if (!empty($this->params['use_cache'])) {
                     $entities = $q->useResultCache(true, 180, $keywordsId)->getResult();
                 } else {
                     $entities = $q->getResult();
                 }
 
             }
-            
+
             foreach ($entities as $e) {
                 $e instanceof \FileBank\Entity\File;
                 if ($e)
                     $this->generateDynamicParameters($e);
             }
-            
+
             // Cache the file entity so we don't have to access db on each call
             // Enables to get multiple entity's properties at different times
             $this->cache[$id] = $entities;
-            
+
             return $entities;
         }
-        
+
         return $entities;
     }
 
@@ -1319,14 +1319,14 @@ class Manager
     {
         $this->em->persist($fileEntity);
         $this->em->flush($fileEntity);
-        
+
         $this->generateDynamicParameters($fileEntity);
     }
 
     /**
      * Save file to FileBank database
      *
-     * @param string $sourceFilePath            
+     * @param string $sourceFilePath
      * @return File
      * @throws \Exception
      */
@@ -1339,28 +1339,28 @@ class Manager
         } else {
             $fileName = basename($sourceFilePath);
         }
-        
+
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
-        
+
         $contents = @file_get_contents($sourceFilePath);
-        
-        if (! $contents)
+
+        if (!$contents)
             throw new \Exception('No se ha podido obtener el fichero o url:' . $sourceFilePath);
-        
+
         $mimetype = $finfo->buffer($contents);
         $ext = $this->getExtension($sourceFilePath, $mimetype);
         $hash = md5(microtime(true) . $fileName);
         $savePath = substr($hash, 0, 1) . '/' . substr($hash, 1, 1) . '/';
-        
+
         $absolutePath = $this->getRoot() . DIRECTORY_SEPARATOR . $savePath . $hash . '.' . $ext;
-        
+
         if ($isVersion === false) {
             try {
                 $this->createPath($absolutePath, $this->params['chmod'], true);
                 $resultCopy = copy($sourceFilePath, $absolutePath);
 
-                if(!$resultCopy)
-                    throw new \Exception('File cannot be saved.' . $sourceFilePath . '=>'. realpath($sourceFilePath) . ' => ' . $absolutePath);
+                if (!$resultCopy)
+                    throw new \Exception('File cannot be saved.' . $sourceFilePath . '=>' . realpath($sourceFilePath) . ' => ' . $absolutePath);
 
                 $this->file = new File();
                 $this->file->setName($fileName);
@@ -1368,13 +1368,24 @@ class Manager
                 $this->file->setSize($this->fixIntegerOverflow(filesize($sourceFilePath)));
                 $this->file->setIsActive($this->params['default_is_active']);
                 $this->file->setSavepath($savePath . $hash . '.' . $ext);
-                
+
                 if ($keywords !== null)
                     $this->setKeywordsToFile($keywords, $this->file);
-                
+
                 $this->saveEntity($this->file);
             } catch (\Exception $e) {
-                throw new \Exception('File cannot be saved.' . $e->getMessage());
+
+                if ($e->getMessage() == 'The EntityManager is closed.') {
+                    if (!$this->em->isOpen()) {
+                        $this->em = $this->em->create(
+                            $this->em->getConnection(),
+                            $this->em->getConfiguration()
+                        );
+                        $this->em->close();
+                    }
+                } else {
+                    throw new \Exception('File cannot be saved.' . $e->getMessage());
+                }
             }
         } else {
             $this->file = new File();
@@ -1383,39 +1394,39 @@ class Manager
             $this->file->setSize($this->fixIntegerOverflow(filesize($sourceFilePath)));
             $this->file->setIsActive($this->params['default_is_active']);
             $this->file->setSavepath($savePath . $hash . '.' . $ext);
-            
+
             if ($keywords !== null)
                 $this->setKeywordsToFile($keywords, $this->file);
-            
+
             $this->saveEntity($this->file);
         }
-        
-         if($keywords !== null && !empty($this->params['use_cache'])) {
-         $this->em->getConnection()->getConfiguration()->getResultCacheImpl()->delete(md5(serialize($keywords)));
-         }
-        
+
+        if ($keywords !== null && !empty($this->params['use_cache'])) {
+            $this->em->getConnection()->getConfiguration()->getResultCacheImpl()->delete(md5(serialize($keywords)));
+        }
+
         return $this->file;
     }
 
     public function saveForFileManager($sourceFilePath, Array $keywords = null)
     {
         $fileName = basename($sourceFilePath);
-        
+
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $mimetype = $finfo->buffer(file_get_contents($sourceFilePath));
-        
+
         $this->file = new File();
         $this->file->setName($fileName);
         $this->file->setMimetype($mimetype);
         $this->file->setSize($this->fixIntegerOverflow(filesize($sourceFilePath)));
         $this->file->setIsActive($this->params['default_is_active']);
         $this->file->setSavepath($sourceFilePath);
-        
+
         if ($keywords !== null)
             $this->setKeywordsToFile($keywords, $this->file);
-        
+
         $this->saveEntity($this->file);
-        
+
         return $this->file;
     }
 
@@ -1430,11 +1441,11 @@ class Manager
         }
         $filename = 'data/' . $filename;
         $contents = @file_get_contents($link);
-        
-        if (! $contents) {
+
+        if (!$contents) {
             throw new \Exception('ÇNo se ha podido obtener la url:' . $link);
         }
-        
+
         file_put_contents($filename, $contents);
         $file = $this->save($filename, $keywords);
         unlink($filename);
@@ -1443,20 +1454,20 @@ class Manager
 
     /**
      *
-     * @param unknown $fileId            
+     * @param unknown $fileId
      * @return boolean
      */
     public function removeById($fileId)
     {
         $e = $this->getFileById($fileId);
         $this->remove($e);
-        
+
         return ($e->getId() === null);
     }
 
     /**
      *
-     * @param File $e            
+     * @param File $e
      * @throws Exception
      * @return \FileBank\Manager
      */
@@ -1478,19 +1489,19 @@ class Manager
         }
 
         $this->em->getConnection()->exec('SET foreign_key_checks = 1;');
-        
+
         return $this;
     }
 
     /**
      *
-     * @param File $e            
+     * @param File $e
      * @return \FileBank\Manager
      */
     protected function _remove(File $e)
     {
         $versions = $e->getVersions();
-        
+
         if ($versions->count() > 0) {
             foreach ($versions as $version) {
                 $this->versionsPreparedToRemove[] = $version;
@@ -1499,9 +1510,9 @@ class Manager
                 }
             }
         }
-        
+
         $this->filesPreparedToRemove[] = $e->getAbsolutePath();
-        
+
         $repo = $this->em->getRepository('FileBank\Entity\FileInS3');
         $resultInS3 = $repo->findOneBy(array(
             'file' => $e
@@ -1511,7 +1522,7 @@ class Manager
         }
         $this->em->remove($e);
         $this->removeKeywordsToFile($e);
-        
+
         return $this;
     }
 
@@ -1523,7 +1534,7 @@ class Manager
                     unset($file);
             }
         }
-        
+
         $this->filesPreparedToRemove = array();
     }
 
@@ -1536,7 +1547,7 @@ class Manager
 
             $this->em->flush();
         }
-        
+
 
         $this->filesPreparedToRemove = array();
     }
@@ -1544,20 +1555,20 @@ class Manager
     /**
      * Attach keywords to file entity
      *
-     * @param array $keywords            
-     * @param FileBank\Entity\File $fileEntity            
+     * @param array $keywords
+     * @param FileBank\Entity\File $fileEntity
      * @return FileBank\Entity\File
      */
     public function addKeywordsToFile($keywords, $fileEntity)
     {
         $keywordEntities = array();
-        
+
         foreach ($keywords as $word) {
             $keyword = new Keyword();
             $keyword->setValue(strtolower($word));
             $keyword->setFile($fileEntity);
             $this->em->persist($keyword);
-            
+
             $keywordEntities[] = $keyword;
         }
         $fileEntity->addKeywords($keywordEntities);
@@ -1566,20 +1577,20 @@ class Manager
     /**
      * Attach keywords to file entity
      *
-     * @param array $keywords            
-     * @param FileBank\Entity\File $fileEntity            
+     * @param array $keywords
+     * @param FileBank\Entity\File $fileEntity
      * @return FileBank\Entity\File
      */
     public function setKeywordsToFile($keywords, File $fileEntity)
     {
         $keywordEntities = array();
-        
+
         foreach ($keywords as $word) {
             $keyword = new Keyword();
             $keyword->setValue(strtolower($word));
             $keyword->setFile($fileEntity);
             $this->em->persist($keyword);
-            
+
             $keywordEntities[] = $keyword;
         }
         $this->removeKeywordsToFile($fileEntity);
@@ -1589,19 +1600,19 @@ class Manager
     /**
      * Attach keywords to file entity
      *
-     * @param \FileBank\Entity\File $fileEntity            
+     * @param \FileBank\Entity\File $fileEntity
      * @return \FileBank\Manager
      */
     public function removeKeywordsToFile($fileEntity)
     {
         $keywords = $fileEntity->getKeywords();
-        
+
         if ($keywords->count() > 0) {
             foreach ($keywords as $keyword) {
                 $this->em->remove($keyword);
             }
 
-            if($keywords !== null && !empty($this->params['use_cache'])) {
+            if ($keywords !== null && !empty($this->params['use_cache'])) {
 
                 foreach ($keywords as $keyword) {
                     $this->em->getConnection()->getConfiguration()->getResultCacheImpl()->delete(md5(serialize(array($keyword))));
@@ -1610,16 +1621,16 @@ class Manager
                 $this->em->getConnection()->getConfiguration()->getResultCacheImpl()->delete(md5(serialize($keywords)));
             }
         }
-        
+
         return $this;
     }
-    
+
     static private $versionCount = 0;
 
     /**
      *
-     * @param File $file            
-     * @param array $version            
+     * @param File $file
+     * @param array $version
      * @return Ambigous <\FileBank\Ambigous, \FileBank\Entity\File, \FileBank\FileBank\Entity\File>
      */
     public function getVersion(File $file, Array $version, $options = array(), $fileEmpty = null, $forceCreate = false)
@@ -1627,18 +1638,18 @@ class Manager
 
         // dejamos solo los que nos sirven
         $version = $this->filterOptions($version, $this->versionOptions);
-        
+
         // dejamos solo los que nos sirven
         $options = current($this->filterOptions(array(
             $options
         ), $this->thumbnailerDefaultOptions));
-        
+
         $verionEncode = array(
             $version,
             $options
         );
         $verionEncode = $this->getVersionEncode($verionEncode);
-        
+
         $versions = $file->getVersions();
         $versions instanceof \Doctrine\ORM\PersistentCollection;
         if ($versions !== null && $versions->count() > 0) {
@@ -1647,12 +1658,13 @@ class Manager
             $collection = $versions->matching($criteria);
 
             if ($collection->count() > 0 && ($versionFile = $collection->current()
-                    ->getVersionFile()) !== null) {
+                    ->getVersionFile()) !== null
+            ) {
                 return $this->generateDynamicParameters($versionFile);
             }
         }
 
-        if(!empty($this->params['create_version_in_ajax'])) {
+        if (!empty($this->params['create_version_in_ajax'])) {
             $encodeParams = array(
                 'fileId' => $file->getId(),
                 'version' => $version,
@@ -1679,8 +1691,8 @@ class Manager
 
     /**
      *
-     * @param File $file            
-     * @param array $version            
+     * @param File $file
+     * @param array $version
      * @return Ambigous <\FileBank\Entity\File, \FileBank\FileBank\Entity\File>
      */
     public function createVersion(File $file, Array $versionOptions, $options = array())
@@ -1693,61 +1705,59 @@ class Manager
         } catch (\Exception $e) {
             return new File();
         }
-        
+
         $versionEntity = new Version();
-        
+
         $versionEntity->setFile($file)->setValue($this->getVersionEncode(array(
             $versionOptions,
             $options
         )));
-        
+
         $this->em->persist($versionEntity);
         $this->em->persist($version->setVersion($versionEntity));
         $this->em->flush($versionEntity);
         $this->em->flush($version);
         $this->em->refresh($versionEntity);
-        
+
         $this->createFileVersion($versionEntity->getVersionFile());
-        
+
         return $version;
     }
 
     public function createFileVersion(File $file)
     {
         $version = $file->getVersion();
-        if (! $version || file_exists($file->getAbsolutePath())) {
+        if (!$version || file_exists($file->getAbsolutePath())) {
             return;
         }
 
         $this->generateDynamicParameters($version->getFile());
 
-        if (! file_exists($version->getFile()->getAbsolutePath())) {
+        if (!file_exists($version->getFile()->getAbsolutePath())) {
             return;
         }
-
 
 
         $allOptions = Json::decode($version->getValue(), Json::TYPE_ARRAY);
         $versionOptions = array_shift($allOptions);
         $options = array_shift($allOptions);
-        
-        try {
 
+        try {
 
 
             $this->createPath($file->getAbsolutePath(), $this->params['chmod'], true);
 
             copy($version->getFile()->getAbsolutePath(), $file->getAbsolutePath());
             //in case of s3 bucket is posibol file is not exist faster
-            if(!file_exists($file->getAbsolutePath()) || !is_writable($file->getAbsolutePath()))
+            if (!file_exists($file->getAbsolutePath()) || !is_writable($file->getAbsolutePath()))
                 return;
 
         } catch (\Exception $e) {
             throw new \Exception('File cannot be saved.');
         }
-        
+
         $thumb = $this->thumbnailer->create($file->getAbsolutePath(), $options);
-        
+
         foreach ($versionOptions as $methods) {
             foreach ($methods as $method => $values) {
                 call_user_func_array(array(
@@ -1756,14 +1766,14 @@ class Manager
                 ), $values);
             }
         }
-        
+
         $thumb->save($file->getAbsolutePath());
-        
+
         $file->setSize(filesize($file->getAbsolutePath()));
-        
+
         $this->em->persist($file);
         $this->em->flush($file);
-        
+
         return $this;
     }
 
@@ -1778,7 +1788,7 @@ class Manager
         foreach ($options as $values) {
             $_options[] = $this->array_intersect_key_recursive($values, $defaultOptions);
         }
-        
+
         return $_options;
     }
 
@@ -1793,18 +1803,18 @@ class Manager
      */
     function array_intersect_key_recursive($master, $mask)
     {
-        if (! is_array($master)) {
+        if (!is_array($master)) {
             return $master;
         }
         foreach ($master as $k => $v) {
-            if (! isset($mask[$k])) {
+            if (!isset($mask[$k])) {
                 unset($master[$k]);
                 continue;
             } // remove value from $master if the key is not present in $mask
             if (is_array($mask[$k])) {
                 $master[$k] = $this->array_intersect_key_recursive($master[$k], $mask[$k]);
             } // recurse when mask is an array
-                  // else simply keep value
+            // else simply keep value
         }
         return $master;
     }
@@ -1812,13 +1822,13 @@ class Manager
     /**
      * Add dynamic data into the entity
      *
-     * @param FileBank\Entity\File $file            
-     * @param Array $linkOptions            
+     * @param FileBank\Entity\File $file
+     * @param Array $linkOptions
      * @return FileBank\Entity\File
      */
     public function generateDynamicParameters(File $file, $options = array())
     {
-        if(!$file->getId())
+        if (!$file->getId())
             return $file;
 
         if (file_exists($file->getSavePath())) {
@@ -1826,7 +1836,7 @@ class Manager
         } else {
             $file->setAbsolutePath($this->getRoot() . DIRECTORY_SEPARATOR . $file->getSavePath());
         }
-        
+
         if ($this->params['use_aws_s3']) {
 //             if (! $this->fileExistInS3($file)) {
 //                 $this->createFileVersion($file);
@@ -1843,12 +1853,12 @@ class Manager
                 'id' => $file->getId(),
                 'name' => $file->getName()
             ), $options));
-            
+
             $file->setDownloadUrl($urlHelper('FileBank/Download', array(
                 'id' => $file->getId(),
                 'name' => $file->getName()
             ), $options));
-            
+
             if (file_exists($file->getSavePath())) {
                 $file->setAbsolutePath($file->getSavePath());
             } else {
@@ -1862,14 +1872,14 @@ class Manager
     /**
      * Create path recursively
      *
-     * @param string $path            
-     * @param string $mode            
-     * @param boolean $isFileIncluded            
+     * @param string $path
+     * @param string $mode
+     * @param boolean $isFileIncluded
      * @return boolean
      */
     protected function createPath($path, $mode, $isFileIncluded)
     {
-        if (! is_dir(dirname($path))) {
+        if (!is_dir(dirname($path))) {
             if ($isFileIncluded) {
                 mkdir(dirname($path), $mode, true);
             } else {
@@ -1897,15 +1907,15 @@ class Manager
             $ext = $spl->getExtension();
         }
 
-        if(isset($this->mimeTypesMap[$ext]))
+        if (isset($this->mimeTypesMap[$ext]))
             return $ext;
-        
-        if($mimeType == 'image/jpeg')
+
+        if ($mimeType == 'image/jpeg')
             return 'jpg';
-        
-    	return array_search($mimeType, $this->mimeTypesMap);
+
+        return array_search($mimeType, $this->mimeTypesMap);
     }
-    
+
     public function getParams()
     {
         return $this->params;
