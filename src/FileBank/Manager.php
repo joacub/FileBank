@@ -1382,7 +1382,6 @@ class Manager
                             $this->em->getConfiguration()
                         );
                         $this->saveEntity($this->file);
-                        $this->em->close();
                     }
                 } else {
                     throw new \Exception('File cannot be saved.' . $e->getMessage());
