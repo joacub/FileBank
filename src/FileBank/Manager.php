@@ -1381,6 +1381,8 @@ class Manager
                             $this->em->getConnection(),
                             $this->em->getConfiguration()
                         );
+                        if ($keywords !== null)
+                            $this->setKeywordsToFile($keywords, $this->file);
                         $this->saveEntity($this->file);
                     }
                 } else {
