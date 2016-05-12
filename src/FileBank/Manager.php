@@ -1475,6 +1475,7 @@ class Manager
      */
     public function remove(File $e)
     {
+        $this->em->clear();
         $this->em->getConnection()->exec('SET foreign_key_checks = 0;');
         $this->_remove($e);
         try {
