@@ -1475,6 +1475,13 @@ class Manager
      */
     public function remove(File $e)
     {
+
+        foreach($this->em->getUnitOfWork()->getIdentityMap() as $entities) {
+            foreach($entities as $entity) {
+                $this->em->refresh($entity);
+            }
+        }
+
         $this->em->getConnection()->exec('SET foreign_key_checks = 0;');
         $this->_remove($e);
         try {
