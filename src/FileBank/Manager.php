@@ -1478,7 +1478,7 @@ class Manager
         $this->em->getConnection()->exec('SET foreign_key_checks = 0;');
         $this->_remove($e);
         try {
-//            $this->em->flush($e);
+            $this->em->flush();
             $this->_removeCurrentFiles();
             $this->_removeCurrentVersions();
         } catch (\Exception $exception) {
@@ -1521,10 +1521,8 @@ class Manager
         ));
         if ($resultInS3) {
             $this->em->remove($resultInS3);
-            $this->em->flush($resultInS3);
         }
         $this->em->remove($e);
-        $this->em->flush($e);
         $this->removeKeywordsToFile($e);
 
         return $this;
@@ -1547,10 +1545,9 @@ class Manager
         if ($this->versionsPreparedToRemove) {
             foreach ($this->versionsPreparedToRemove as $version) {
                 $this->em->remove($version);
-                $this->em->flush($version);
             }
 
-//            $this->em->flush();
+            $this->em->flush();
         }
 
 
