@@ -1126,7 +1126,9 @@ class Manager
         $this->em = $em;
         $this->cache = array();
         $this->sl = $sl;
-        $this->thumbnailer = $this->sl->get('WebinoImageThumb');
+        $di = $this->sl->get('DependencyInjector');
+        $this->thumbnailer = $di->get('WebinoImageThumb');
+
     }
 
     /**
