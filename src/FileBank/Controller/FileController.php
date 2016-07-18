@@ -3,9 +3,6 @@
 namespace FileBank\Controller;
 
 use Zend\Json\Json;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Nette\Diagnostics\Debugger;
 use FileBank\Manager;
 use FileBank\Entity\File;
 
