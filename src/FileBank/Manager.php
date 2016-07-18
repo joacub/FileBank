@@ -1193,7 +1193,7 @@ class Manager
         if (isset($this->cache[$fileId])) {
             $entity = $this->cache[$fileId];
         } else {
-            $pluginUrl = $this->sl->get('viewrenderer')
+            $pluginUrl = $this->sl->get('ViewRenderer')
                 ->getEngine()
                 ->plugin('url');
             $pluginUrl instanceof Url;
@@ -1225,7 +1225,7 @@ class Manager
         if (isset($this->cache[$savePath])) {
             $entity = $this->cache[$savePath];
         } else {
-            $pluginUrl = $this->sl->get('viewrenderer')
+            $pluginUrl = $this->sl->get('ViewRenderer')
                 ->getEngine()
                 ->plugin('url');
             $pluginUrl instanceof Url;
@@ -1687,7 +1687,7 @@ class Manager
 
             $fileInAjax = new File();
 
-            $urlHelper = $this->sl->get('viewrenderer')
+            $urlHelper = $this->sl->get('ViewRenderer')
                 ->getEngine()
                 ->plugin('url');
             $fileInAjax->setUrl($urlHelper('FileBank/CreateVersionInAjax', array(
@@ -1857,7 +1857,7 @@ class Manager
 
             $file->setDownloadUrl($this->params['s3_base_url'] . $this->params['filebank_folder_aws_s3'] . $file->getSavePath());
         } else {
-            $urlHelper = $this->sl->get('viewrenderer')
+            $urlHelper = $this->sl->get('ViewRenderer')
                 ->getEngine()
                 ->plugin('url');
             $file->setUrl($urlHelper('FileBank/View', array(

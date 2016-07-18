@@ -2,6 +2,10 @@
 
 namespace FileBank\Service;
 
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use FileBank\Manager;
@@ -25,4 +29,11 @@ class Factory implements FactoryInterface
         $manager = new Manager($params, $em, $serviceLocator);
         return $manager;
     }
+
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        return $this->createService($container);
+    }
+
+
 }

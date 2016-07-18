@@ -3,6 +3,7 @@
 namespace FileBank;
 
 use FileBank\View\Helper\FileBank;
+use Tracy\Debugger;
 
 class Module
 {
@@ -39,7 +40,7 @@ class Module
         return array(
             'factories' => array(
                 'fileBank' => function ($sm) {
-                    $locator = $sm->getServiceLocator();
+                    $locator = $sm;
                     $config = $locator->get('Configuration');
                     $params = $config['FileBank']['params'];
                     
