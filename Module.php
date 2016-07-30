@@ -4,6 +4,7 @@ namespace FileBank;
 
 use FileBank\View\Helper\FileBank;
 use Tracy\Debugger;
+use Zend\View\HelperPluginManager;
 
 class Module
 {
@@ -41,6 +42,9 @@ class Module
             'factories' => array(
                 'fileBank' => function ($sm) {
                     $locator = $sm;
+                    if($locator instanceof HelperPluginManager) {
+                        $locator = $locator->getServiceLocator();
+                    }
                     $config = $locator->get('Configuration');
                     $params = $config['FileBank']['params'];
                     
