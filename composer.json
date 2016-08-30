@@ -15,9 +15,6 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {
-        "joacub/doctrine-orm-module": ">=0.7"
-    },
     "autoload": {
         "psr-0": {
             "FileBank": "src/"
