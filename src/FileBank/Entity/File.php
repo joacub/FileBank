@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use FileBank\Entity\Keyword;
 use FileBank\Entity\Version;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * File entity.
@@ -36,68 +37,122 @@ class File
      * @ORM\Column(type="integer");
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
+    private $id;
 
     /**
      * @ORM\Column(type="string")
      */
-    protected $name;
+    private $name;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $title;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $caption;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $description;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $alt;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $height;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $width;
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $exif = [
+        'aperture' => '0',
+        'credit' => '',
+        'camera' => '',
+        'caption' => '',
+        'created_timestamp' => '0',
+        'copyright' => '',
+        'focal_length' => '0',
+        'iso' => '0',
+        'shutter_speed' => '0',
+        'title' => '',
+        'orientation' => '0',
+        'keywords' => [],
+    ];
 
     /**
      * @ORM\Column(type="integer")
      */
-    protected $size;
+    private $size;
 
     /**
      * @ORM\Column(type="string")
      */
-    protected $mimetype;
+    private $mimetype;
 
     /**
      * @ORM\Column(type="integer")
      */
-    protected $isactive;
+    private $isactive;
 
     /**
      * @ORM\Column(type="string")
      */
-    protected $savepath;
+    private $savepath;
 
     /**
      * @ORM\OneToMany(targetEntity="FileBank\Entity\Keyword", mappedBy="file")
      * @ORM\OrderBy({"id" = "ASC"})
      * @var \Doctrine\Common\Collections\ArrayCollection
      */
-    protected $keywords;
+    private $keywords;
     
     /**
      * @ORM\OneToMany(targetEntity="FileBank\Entity\Version", mappedBy="file")
      * @ORM\OrderBy({"id" = "ASC"})
      * @var \Doctrine\Common\Collections\ArrayCollection
      */
-    protected $versions;
+    private $versions;
     
     /**
      * @ORM\OneToOne(targetEntity="FileBank\Entity\Version", inversedBy="versionfile", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="version_id", referencedColumnName="id")
      * @var \FileBank\Entity\Version
      */
-    protected $version;
+    private $version;
     
     /**
      * @var string $downloadUrl 
      */
-    protected $url;
+    private $url;
     
     /**
      * @var string $downloadUrl
      */
-    protected $downloadUrl;
+    private $downloadUrl;
     
     /**
      * @var string $absolutePath
      */
-    protected $absolutePath;
+    private $absolutePath;
+
+    /**
+     *
+     * @ORM\Column(type="datetime")
+     * @Gedmo\Timestampable(on="create")
+     */
+    private $dateCreated;
     
     /**
      * Getter for the file id
@@ -370,5 +425,151 @@ class File
         $this->setIsActive($data['isactive']);
         $this->setSavePath($data['savepath']);
     }
+
+    /**
+     * @return mixed
+     */
+    public function getDateCreated()
+    {
+        return $this->dateCreated;
+    }
+
+    /**
+     * @param mixed $dateCreated
+     */
+    public function setDateCreated($dateCreated)
+    {
+        $this->dateCreated = $dateCreated;
+    }
+
+    /**
+     * @return int
+     */
+    public function getVersionid(): int
+    {
+        return $this->versionid;
+    }
+
+    /**
+     * @param int $versionid
+     */
+    public function setVersionid(int $versionid)
+    {
+        $this->versionid = $versionid;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param mixed $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCaption()
+    {
+        return $this->caption;
+    }
+
+    /**
+     * @param mixed $caption
+     */
+    public function setCaption($caption)
+    {
+        $this->caption = $caption;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param mixed $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAlt()
+    {
+        return $this->alt;
+    }
+
+    /**
+     * @param mixed $alt
+     */
+    public function setAlt($alt)
+    {
+        $this->alt = $alt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHeight()
+    {
+        return $this->height;
+    }
+
+    /**
+     * @param mixed $height
+     */
+    public function setHeight($height)
+    {
+        $this->height = $height;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWidth()
+    {
+        return $this->width;
+    }
+
+    /**
+     * @param mixed $width
+     */
+    public function setWidth($width)
+    {
+        $this->width = $width;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getExif()
+    {
+        return $this->exif;
+    }
+
+    /**
+     * @param mixed $exif
+     */
+    public function setExif($exif)
+    {
+        $this->exif = $exif;
+    }
+
+
 }
 

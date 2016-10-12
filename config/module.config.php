@@ -2,6 +2,8 @@
 
 namespace FileBank;
 
+use FileBank\Controller\FileController;
+
 return array(
     __NAMESPACE__ => array(
         'params' => array(
@@ -18,7 +20,7 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            __NAMESPACE__ . '\Controller\File' => __NAMESPACE__ . '\Controller\FileController',
+            FileController::class => FileController::class,
         ),
     ),
     'router' => array(
@@ -28,10 +30,11 @@ return array(
                 'options' => array(
                     'route' => '/files', 
                     'defaults' => array(
-                        'controller' => __NAMESPACE__ . '\Controller\File', 
+                        'controller' => FileController::class,
                         'action' => 'index'
                     )
-                ), 
+                ),
+                'priority' => 9999,
                 'may_terminate' => true, 
                 'child_routes' => array(
                     'Download' => array(
@@ -43,8 +46,7 @@ return array(
                                 //'name' => '[a-zA-Z0-9_-]+.[a-zA-Z0-9]+'
                             ), 
                             'defaults' => array(
-                                'controller' => __NAMESPACE__ .
-                                 '\Controller\File', 
+                                'controller' => FileController::class,
                                 'action' => 'download'
                             )
                         )
@@ -58,8 +60,7 @@ return array(
                                 //'name' => '[a-zA-Z0-9_-]+.[a-zA-Z0-9_-]+'
                             ), 
                             'defaults' => array(
-                                'controller' => __NAMESPACE__ .
-                                 '\Controller\File', 
+                                'controller' => FileController::class,
                                 'action' => 'view'
                             )
                         )
@@ -73,8 +74,7 @@ return array(
                                 //'name' => '[a-zA-Z0-9_-]+.[a-zA-Z0-9_-]+'
                             ),
                             'defaults' => array(
-                                'controller' => __NAMESPACE__ .
-                                '\Controller\File',
+                                'controller' => FileController::class,
                                 'action' => 'view'
                             )
                         )
