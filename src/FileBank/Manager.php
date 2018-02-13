@@ -1399,7 +1399,13 @@ class Manager
                 $this->file->setIsActive($this->params['default_is_active']);
                 $this->file->setSavepath($savePath . $hash . '.' . $ext);
                 $this->file->setTitle(preg_replace('/[^a-zA-Z0-9]/', ' ', $fileName));
-                $this->file->setExif($exifData);
+
+                $serializeExif = @serialize($exifData);
+                $unserializeValue = @unserialize($serializeExif);
+
+                if($unserializeValue) {
+                    $this->file->setExif($exifData);
+                }
 
                 if ($isImage) {
                     list($width, $height) = getimagesize($sourceFilePath);
@@ -1718,6 +1724,7 @@ class Manager
         }
 
         if (!empty($this->params['create_version_in_ajax'])) {
+
             $encodeParams = array(
                 'fileId' => $file->getId(),
                 'version' => $version,
